@@ -1,0 +1,246 @@
+/* css/anime.css */
+:root {
+  --primary-color: #ff007a;
+  --secondary-color: #00ddeb;
+  --background-color: #0a001e;
+  --text-color: #ffffff;
+  --text-secondary: #b0b0b0;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --navbar-bg: rgba(10, 0, 30, 0.7);
+  --sidebar-bg: rgba(10, 0, 30, 0.7);
+  --accent-color: #ff007a;
+  --shadow-color: rgba(255, 0, 122, 0.5);
+}
+
+.theme-purple {
+  --primary-color: #6a0dad;
+  --secondary-color: #b400ff;
+  --accent-color: #b400ff;
+  --shadow-color: rgba(106, 13, 173, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Cairo", sans-serif;
+  background: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.main-content {
+  max-width: 1100px;
+  margin: clamp(60px, 10vh, 80px) auto clamp(2rem, 5vh, 3rem);
+  padding: 0 clamp(0.8rem, 2vw, 1rem);
+}
+
+.search-section {
+  margin: clamp(1rem, 2vw, 1.5rem) 0;
+  display: flex;
+  justify-content: center;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.5vw, 10px);
+  width: 100%;
+  max-width: clamp(300px, 50vw, 500px);
+}
+
+.search-input {
+  flex: 1;
+  padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2vw, 15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 25px;
+  background: var(--glass-bg);
+  color: var(--text-color);
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 8px var(--shadow-color);
+}
+
+.search-btn {
+  padding: clamp(8px, 1.5vw, 10px);
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--accent-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 0 8px var(--shadow-color);
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 1.5vw, 10px);
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.tab-btn {
+  padding: clamp(8px, 1.5vw, 10px) clamp(16px, 2vw, 20px);
+  border: none;
+  border-radius: 25px;
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.tab-btn.active {
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 0 8px var(--shadow-color);
+}
+
+.anime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 20vw, 180px), 1fr));
+  gap: clamp(10px, 2vw, 15px);
+  padding: clamp(0.8rem, 2vw, 1rem);
+}
+
+.anime-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.anime-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+.anime-card img {
+  width: 100%;
+  height: clamp(200px, 30vw, 250px);
+  object-fit: cover;
+}
+
+.anime-card .info {
+  padding: clamp(8px, 1.5vw, 10px);
+  text-align: center;
+}
+
+.anime-card .title {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 600;
+  margin-bottom: clamp(4px, 1vw, 6px);
+  color: var(--text-color);
+}
+
+.anime-card .status {
+  font-size: clamp(0.75rem, 2vw, 0.85rem);
+  color: var(--text-secondary);
+}
+
+.anime-card .rating {
+  position: absolute;
+  top: clamp(8px, 1.5vw, 10px);
+  left: clamp(8px, 1.5vw, 10px);
+  background: var(--accent-color);
+  color: #fff;
+  padding: clamp(4px, 1vw, 6px);
+  border-radius: 8px;
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
+  font-weight: bold;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(8px, 1.5vw, 10px);
+  margin-top: clamp(1rem, 2vw, 1.5rem);
+}
+
+#pageInfo {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  color: var(--text-color);
+}
+
+.glass-btn {
+  padding: clamp(8px, 1.5vw, 10px);
+  border-radius: 50%;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--accent-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.glass-btn:hover {
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 0 8px var(--shadow-color);
+}
+
+.glass-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin: clamp(50px, 8vh, 60px) auto clamp(1.5rem, 4vh, 2rem);
+    padding: 0 clamp(0.6rem, 1.5vw, 0.8rem);
+  }
+
+  .anime-grid {
+    grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 18vw, 150px), 1fr));
+  }
+
+  .anime-card img {
+    height: clamp(180px, 28vw, 220px);
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    margin: clamp(40px, 7vh, 50px) auto clamp(1rem, 3vh, 1.5rem);
+  }
+
+  .search-container {
+    max-width: 100%;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+  }
+
+  .anime-grid {
+    grid-template-columns: repeat(auto-fill, minmax(clamp(100px, 45vw, 130px), 1fr));
+  }
+
+  .anime-card img {
+    height: clamp(150px, 25vw, 180px);
+  }
+}
