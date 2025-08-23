@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Pandacine - مشاهدة أنمي وأفلام</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="components/component-loader.js" defer></script>
+  <script src="theme.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <!-- شاشة التحميل -->
+  <div id="loading-screen">
+    <div class="loading-logo">
+      <i class="fas fa-star"></i>
+      <div class="logo-text">PandaCine</div>
+    </div>
+    <div class="loader"></div>
+    <p>جاري التحميل...</p>
+  </div>
+
+  <!-- خلفية النجوم -->
+  <div id="stars"></div>
+
+  <!-- حاويات المكونات المشتركة -->
+  <div id="header-container"></div>
+  <div id="sidebar-container"></div>
+  <div id="notifications-container"></div>
+
+  <!-- المحتوى الرئيسي -->
+  <main>
+    <section id="homePage" class="hero-section">
+      <div class="hero glass" role="main" aria-label="الصفحة الرئيسية">
+        <h1>مرحبًا بك في<br> PandaCine</h1>
+        <p>
+          وجهتك المثالية لمشاهدة أفضل الأنمي والأفلام بجودة عالية وترجمات
+          احترافية. استمتع بتجربة مشاهدة فريدة مع مكتبة ضخمة تتجدد باستمرار.
+        </p>
+        <div class="button-group" role="group" aria-label="اختيار نوع المحتوى">
+          <a href="pages/anime/anime.html" class="action-btn">
+            <i class="fas fa-dragon"></i> أنمي
+          </a>
+          <a href="movie.html" class="action-btn">
+            <i class="fas fa-film"></i> أفلام
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="features-section">
+      <h2 class="section-title">لماذا PandaCine؟</h2>
+      <div class="features-grid">
+        <div class="feature-card glass">
+          <div class="feature-icon">
+            <i class="fas fa-play-circle"></i>
+          </div>
+          <h3 class="feature-title">جودة عالية</h3>
+          <p class="feature-description">
+            استمتع بمشاهدة المحتوى بدقة تصل إلى 4K مع صوت عالي الدقة لتحقيق
+            تجربة مشاهدة استثنائية.
+          </p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon">
+            <i class="fas fa-sync"></i>
+          </div>
+          <h3 class="feature-title">تحديثات مستمرة</h3>
+          <p class="feature-description">
+            نضيف باستمرار أحدث حلقات الأنمي والأفلام فور صدورها لضمان حصولك
+            على المحتوى أولاً بأول.
+          </p>
+        </div>
+        <div class="feature-card glass">
+          <div class="feature-icon">
+            <i class="fas fa-closed-captioning"></i>
+          </div>
+          <h3 class="feature-title">ترجمات احترافية</h3>
+          <p class="feature-description">
+            ترجمات دقيقة وواضحة بجودة عالية، مع مراعاة السياق الثقافي للغة
+            العربية.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="loginPage" class="login-section glass hidden" role="region" aria-label="تسجيل الدخول">
+      <h2>تسجيل الدخول</h2>
+      <form id="loginForm" aria-describedby="loginHelp">
+        <input type="text" id="username" placeholder="اسم المستخدم" required autocomplete="username" />
+        <input type="password" id="password" placeholder="كلمة المرور" required autocomplete="current-password" />
+        <a href="#" class="forgot-password">نسيت كلمة المرور؟</a>
+        <button type="submit" class="action-btn">دخول</button>
+        <button type="button" id="backToHome" class="action-btn secondary">عودة</button>
+      </form>
+      <div class="social-login">
+        <div class="social-btn fb-btn">
+          <i class="fab fa-facebook-f"></i>
+        </div>
+        <div class="social-btn google-btn">
+          <i class="fab fa-google"></i>
+        </div>
+        <div class="social-btn twitter-btn">
+          <i class="fab fa-twitter"></i>
+        </div>
+      </div>
+      <p>ليس لديك حساب؟ <a href="#" style="color: var(--accent-color)">سجل الآن</a></p>
+      <p id="loginHelp" class="sr-only">
+        يرجى إدخال اسم المستخدم وكلمة المرور لتسجيل الدخول
+      </p>
+    </section>
+  </main>
+
+  <!-- حاوية الفوتر -->
+  <div id="footer-container"></div>
+
+  <audio id="popSound" preload="auto">
+    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_e3a5cfcd5d.mp3" type="audio/mpeg" />
+  </audio>
+</body>
+</html>
