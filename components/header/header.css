@@ -1,0 +1,95 @@
+/* components/header/header.css */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: var(--navbar-bg);
+  z-index: 1000;
+  padding: clamp(0.2rem, 2vw, 0.3rem) clamp(0.4rem, 2vw, 0.6rem);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: all 0.5s ease;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+}
+@supports not (backdrop-filter: blur(10px)) {
+  .navbar {
+    background: rgba(10, 0, 30, 0.92);
+  }
+}
+
+.navbar-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 clamp(8px, 2vw, 10px);
+  direction: ltr;
+}
+
+.left-buttons,
+.right-buttons {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+  direction: ltr;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  background: none;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logo-img {
+  background: transparent !important;
+  height: clamp(30px, 5vw, 40px);
+  width: auto;
+}
+
+.logo-purple {
+  display: none;
+}
+
+.theme-purple .logo-root {
+  display: none;
+}
+
+.theme-purple .logo-purple {
+  display: block;
+}
+
+.right-buttons i {
+  transform: scale(1.5);
+  background: none;
+  color: var(--text-color);
+}
+
+.settings-btn, #backBtn, #notificationsBtn {
+  background: transparent !important;
+  border: none !important;
+  position: relative;
+  width: clamp(28px, 4vw, 36px);
+  height: clamp(28px, 4vw, 36px);
+}
+
+.settings-btn i, #backBtn i, #notificationsBtn i {
+  color: var(--accent-color);
+  text-shadow: 0 0 8px var(--shadow-color);
+  transition: all 0.3s ease;
+}
+
+.settings-btn:hover i, #backBtn:hover i, #notificationsBtn:hover i {
+  transform: scale(1.2);
+  color: #fff;
+  text-shadow: 0 0 12px var(--accent-color);
+}
