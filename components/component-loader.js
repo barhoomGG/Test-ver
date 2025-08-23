@@ -1,57 +1,60 @@
-
-
 // component-loader.js
 
-// دالة لتحميل HTML من ملف وإضافته إلى عنصر هدف في الـ DOM
-async function loadHTML(componentPath, targetId) {
-  try {
-    const response = await fetch(componentPath);
-    if (!response.ok) throw new Error(`Failed to load ${componentPath}`);
-    const html = await response.text();
-    const target = document.getElementById(targetId);
-    if (target) target.innerHTML = html;
-  } catch (error) {
-    console.error(`Error loading HTML for ${componentPath}:`, error);
-  }
+// دالة لتحميل HTML من ملف خارجي
+async function loadHTML(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Failed to load ${url}`);
+  return await response.text();
 }
 
-// دالة لتحميل CSS من ملف وإضافته إلى الـ head
-function loadCSS(cssPath) {
+// دالة لتحميل CSS وإضافتها إلى الـ head
+function loadCSS(url) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = cssPath;
+  link.href = url;
   document.head.appendChild(link);
 }
 
-// دالة لتحميل JS من ملف وإضافته إلى الـ body (مع دعم type="module" إذا لزم الأمر)
-function loadJS(jsPath, isModule = false) {
+// دالة لتحميل JS وتنفيذها
+function loadJS(url) {
   const script = document.createElement('script');
-  script.src = jsPath;
-  if (isModule) script.type = 'module';
+  script.src = url;
   document.body.appendChild(script);
 }
 
-// تحميل المكونات المشتركة عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', async () => {
-  // تحميل الهيدر
-  loadCSS('components/header/header.css');
-  await loadHTML('components/header/header.html', 'headerPlaceholder');
-  loadJS('components/header/header.js');
+// تحميل المكونات المشتركة
+async function loadComponents() {
+  try {
+    // تحميل Header
+    const headerHTML = await loadHTML('components/header/header.html');
+    document.body.insertAdjacentHTML('afterbegin', headerHTML);
+    loadCSS('components/header/header.css');
+    loadJS('components/header/header.js');
 
-  // تحميل السايدبار
-  loadCSS('components/sidebar/sidebar.css');
-  await loadHTML('components/sidebar/sidebar.html', 'sidebarPlaceholder');
-  loadJS('components/sidebar/sidebar.js');
+    // تحميل Sidebar
+    const sidebarHTML = await loadHTML('components/sidebar/sidebar.html');
+    document.body.insertAdjacentHTML('beforeend', sidebarHTML);
+    loadCSS('components/sidebar/sidebar.css');
+    loadJS('components/sidebar/sidebar.js');
 
-  // تحميل الفوتر
-  loadCSS('components/footer/footer.css');
-  await loadHTML('components/footer/footer.html', 'footerPlaceholder');
+    // تحميل Footer
+    const footerHTML = await loadHTML('components/footer/footer.html');
+    document.body.insertAdjacentHTML('beforeend', footerHTML);
+    loadCSS('components/footer/footer.css');
 
-  // تحميل الإشعارات
-  loadCSS('components/notifications/notifications.css');
-  await loadHTML('components/notifications/notifications.html', 'notificationsPlaceholder');
-  loadJS('components/notifications/notifications.js');
+    // تحميل Notifications
+    const notificationsHTML = await loadHTML('components/notifications/notifications.html');
+    document.body.insertAdjacentHTML('beforeend', notificationsHTML);
+    loadCSS('components/notifications/notifications.css');
+    loadJS('components/notifications/notifications.js');
 
-  // بعد تحميل جميع المكونات، يمكن تنفيذ أي كود إضافي يعتمد عليها
-  // مثل استدعاء دالة init() إذا لزم الأمر
+    console.log('All components loaded successfully');
+  } catch (error) {
+    console.error('Error loading components:', error);
+  }
+}
+
+// تشغيل التحميل عند تحميل الصفحة، بعد theme.js و data-manager.js
+document.addEventListener('DOMContentLoaded', () => {
+  loadComponents();
 });
