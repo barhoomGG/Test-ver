@@ -1,4 +1,3 @@
-```javascript
 // anime.js
 import DataManager from './data-manager.js';
 
@@ -833,6 +832,25 @@ document.addEventListener("DOMContentLoaded", () => {
     startSpotlightTimer();
   }
 
+  // معالجة بيانات الأنمي
+  function processAnimeData(anime) {
+    return {
+      id: anime.id || `anime-${Math.random().toString(36).substr(2, 9)}`,
+      title: anime.title || "بدون عنوان",
+      poster: anime.poster || anime.cover || '',
+      cover: anime.cover || anime.poster || '',
+      genres: Array.isArray(anime.genres) ? anime.genres : [],
+      imdb: anime.imdb || parseFloat((Math.random() * 2 + 7).toFixed(1)),
+      views: anime.views || Math.floor(Math.random() * 10000),
+      releaseDate: anime.releaseDate || new Date().toISOString(),
+      totalEpisodes: anime.totalEpisodes || Math.floor(Math.random() * 24) + 1,
+      currentEpisode: anime.currentEpisode || Math.floor(Math.random() * 12) + 1,
+      showIn: anime.showIn || "all",
+      date: anime.date || new Date().toISOString(),
+    };
+  }
+
+  // تحميل البيانات
   async function loadData() {
     if (loader) loader.classList.remove("hidden");
 
@@ -845,4 +863,53 @@ document.addEventListener("DOMContentLoaded", () => {
         animeList = Array.from(uniqueAnime.values());
         showNotification("تم تحميل بيانات الأنمي بنجاح");
         initFilters();
-        initGridToggle
+        initGridToggle();
+        filterAnimeList();
+        renderSpotlightSlider();
+        setupInfiniteScroll();
+        setTimeout(() => {
+          if (loadingScreen) loadingScreen.classList.add("hidden");
+        }, 1000);
+      } else {
+        throw new Error("البيانات المستلمة ليست بالصيغة المتوقعة");
+      }
+    } catch (error) {
+      console.error("خطأ في تحميل بيانات الأنمي:", error);
+      showNotification("فشل تحميل بيانات الأنمي، حاول مرة أخرى لاحقًا");
+      if (loadingScreen) loadingScreen.classList.add("hidden");
+    } finally {
+      if (loader) loader.classList.add("hidden");
+    }
+  }
+
+  // إعداد البحث
+  function setupSearch() {
+    if (animeSearch) {
+      let searchTimeout;
+      animeSearch.addEventListener("input", () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          const query = animeSearch.value.trim().toLowerCase();
+          if (query) {
+            currentAnimeList = animeList.filter((anime) =>
+              anime.title.toLowerCase().includes(query)
+            );
+            sortAnimeList();
+            currentPage = 1;
+            renderAnimeGrid();
+          } else {
+            filterAnimeList();
+          }
+        }, 300);
+      });
+    }
+  }
+
+  // تهيئة الصفحة
+  function init() {
+    setupSearch();
+    loadData();
+  }
+
+  init();
+});
