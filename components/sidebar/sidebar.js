@@ -1,41 +1,36 @@
 // sidebar.js
-
-// إعداد السايدبار
 document.addEventListener('DOMContentLoaded', () => {
-  const settingsBtn = document.getElementById("settingsBtn");
-  const settingsMenu = document.getElementById("settingsMenu");
-  const loginLink = document.getElementById("loginLink");
-  const aboutLink = document.getElementById("aboutLink");
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsMenu = document.getElementById('settingsMenu');
+  const loginLink = document.getElementById('loginLink');
+  const aboutLink = document.getElementById('aboutLink');
 
   if (settingsBtn && settingsMenu) {
-    settingsBtn.addEventListener("click", (e) => {
+    settingsBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      settingsMenu.classList.toggle("active");
-      showNotification("تم فتح قائمة الإعدادات");
+      settingsMenu.classList.toggle('active');
     });
 
-    document.addEventListener("click", (e) => {
+    document.addEventListener('click', (e) => {
       if (!settingsBtn.contains(e.target) && !settingsMenu.contains(e.target)) {
-        settingsMenu.classList.remove("active");
+        settingsMenu.classList.remove('active');
       }
     });
   }
 
   if (loginLink) {
-    loginLink.addEventListener("click", (e) => {
+    loginLink.addEventListener('click', (e) => {
       e.preventDefault();
-      showNotification("جارٍ الانتقال إلى صفحة تسجيل الدخول...");
-      setTimeout(() => (window.location.href = "login.html"), 500);
-      settingsMenu.classList.remove("active");
+      window.location.href = 'login.html';
+      settingsMenu.classList.remove('active');
     });
   }
 
   if (aboutLink) {
-    aboutLink.addEventListener("click", (e) => {
+    aboutLink.addEventListener('click', (e) => {
       e.preventDefault();
-      showNotification("جارٍ الانتقال إلى صفحة حول...");
-      setTimeout(() => (window.location.href = "about.html"), 500);
-      settingsMenu.classList.remove("active");
+      window.location.href = 'about.html';
+      settingsMenu.classList.remove('active');
     });
   }
 });
