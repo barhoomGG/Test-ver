@@ -1,35 +1,60 @@
-// components/component-loader.js
-async function loadComponent(componentName, targetElementId) {
+// component-loader.js
+
+// دالة لتحميل HTML من ملف خارجي
+async function loadHTML(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Failed to load ${url}`);
+  return await response.text();
+}
+
+// دالة لتحميل CSS وإضافتها إلى الـ head
+function loadCSS(url) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = url;
+  document.head.appendChild(link);
+}
+
+// دالة لتحميل JS وتنفيذها
+function loadJS(url) {
+  const script = document.createElement('script');
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+// تحميل المكونات المشتركة
+async function loadComponents() {
   try {
-    // تحميل HTML
-    const htmlResponse = await fetch(`/components/${componentName}/${componentName}.html`);
-    if (!htmlResponse.ok) throw new Error(`Failed to load ${componentName}.html`);
-    const html = await htmlResponse.text();
-    document.getElementById(targetElementId).innerHTML = html;
+    // تحميل Header
+    const headerHTML = await loadHTML('components/header/header.html');
+    document.body.insertAdjacentHTML('afterbegin', headerHTML);
+    loadCSS('components/header/header.css');
+    loadJS('components/header/header.js');
 
-    // تحميل CSS
-    const cssLink = document.createElement('link');
-    cssLink.rel = 'stylesheet';
-    cssLink.href = `/components/${componentName}/${componentName}.css`;
-    document.head.appendChild(cssLink);
+    // تحميل Sidebar
+    const sidebarHTML = await loadHTML('components/sidebar/sidebar.html');
+    document.body.insertAdjacentHTML('beforeend', sidebarHTML);
+    loadCSS('components/sidebar/sidebar.css');
+    loadJS('components/sidebar/sidebar.js');
 
-    // تحميل JavaScript إذا وجد
-    const jsResponse = await fetch(`/components/${componentName}/${componentName}.js`);
-    if (jsResponse.ok) {
-      const js = await jsResponse.text();
-      const script = document.createElement('script');
-      script.textContent = js;
-      document.body.appendChild(script);
-    }
+    // تحميل Footer
+    const footerHTML = await loadHTML('components/footer/footer.html');
+    document.body.insertAdjacentHTML('beforeend', footerHTML);
+    loadCSS('components/footer/footer.css');
+
+    // تحميل Notifications
+    const notificationsHTML = await loadHTML('components/notifications/notifications.html');
+    document.body.insertAdjacentHTML('beforeend', notificationsHTML);
+    loadCSS('components/notifications/notifications.css');
+    loadJS('components/notifications/notifications.js');
+
+    console.log('All components loaded successfully');
   } catch (error) {
-    console.error(`Error loading component ${componentName}:`, error);
+    console.error('Error loading components:', error);
   }
 }
 
-// تحميل المكونات المشتركة عند تحميل الصفحة
+// تشغيل التحميل عند تحميل الصفحة، بعد theme.js و data-manager.js
 document.addEventListener('DOMContentLoaded', () => {
-  loadComponent('header', 'header-container');
-  loadComponent('sidebar', 'sidebar-container');
-  loadComponent('footer', 'footer-container');
-  loadComponent('notifications', 'notifications-container');
+  loadComponents();
 });
