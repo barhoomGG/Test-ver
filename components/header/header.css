@@ -1,18 +1,16 @@
-/* components/header/header.css */
+/* --- الشريط العلوي --- */
 .navbar {
   position: fixed;
   top: 0;
   width: 100%;
   background: var(--navbar-bg);
   z-index: 1000;
-  padding: clamp(0.2rem, 2vw, 0.3rem) clamp(0.4rem, 2vw, 0.6rem);
+  padding: clamp(0.2rem, 2vw, 0.3rem) clamp(0.4rem, 2vw, 0.6rem); /* استخدام clamp للهوامش */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   transition: all 0.5s ease;
   box-sizing: border-box;
   backdrop-filter: blur(10px);
-}
-@supports not (backdrop-filter: blur(10px)) {
-  .navbar {
+  @supports not (backdrop-filter: blur(10px)) {
     background: rgba(10, 0, 30, 0.92);
   }
 }
@@ -23,7 +21,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 clamp(8px, 2vw, 10px);
+  padding: 0 clamp(8px, 2vw, 10px); /* استخدام clamp للهوامش */
   direction: ltr;
 }
 
@@ -31,7 +29,7 @@
 .right-buttons {
   display: flex;
   align-items: center;
-  gap: clamp(6px, 1.5vw, 10px);
+  gap: clamp(6px, 1.5vw, 10px); /* استخدام clamp للمسافات */
   direction: ltr;
 }
 
@@ -52,7 +50,7 @@
 
 .logo-img {
   background: transparent !important;
-  height: clamp(30px, 5vw, 40px);
+  height: clamp(30px, 5vw, 40px); /* استخدام clamp لحجم الصورة */
   width: auto;
 }
 
@@ -78,7 +76,7 @@
   background: transparent !important;
   border: none !important;
   position: relative;
-  width: clamp(28px, 4vw, 36px);
+  width: clamp(28px, 4vw, 36px); /* استخدام clamp لحجم الأزرار */
   height: clamp(28px, 4vw, 36px);
 }
 
@@ -92,4 +90,41 @@
   transform: scale(1.2);
   color: #fff;
   text-shadow: 0 0 12px var(--accent-color);
+}
+
+.glass-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  color: var(--accent-color);
+  transition: all 0.3s ease;
+  width: clamp(28px, 4vw, 32px); /* استخدام clamp لحجم الأزرار */
+  height: clamp(28px, 4vw, 32px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.8rem, 2vw, 0.9rem); /* استخدام clamp لحجم الخط */
+  border-radius: 50%;
+  @supports not (backdrop-filter: blur(10px)) {
+    background: rgba(10, 0, 30, 0.92);
+  }
+}
+
+.glass-btn:hover {
+  background: var(--accent-color);
+  color: var(--text-color);
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: clamp(0.6rem, 1.5vw, 0.7rem); /* استخدام clamp لحجم الخط */
+  font-weight: bold;
 }
