@@ -1,4 +1,4 @@
-/* --- الفوتر --- */
+/* footer.css */
 .footer {
   padding: clamp(1.2rem, 2vw, 2rem) clamp(0.6rem, 1.5vw, 1rem); /* استخدام clamp للهوامش */
   background: var(--navbar-bg);
