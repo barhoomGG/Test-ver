@@ -1,3 +1,4 @@
+/* notifications.css */
 /* --- بوب أب الإشعارات --- */
 .notifications-modal {
   position: fixed;
@@ -106,7 +107,6 @@
   margin-top: clamp(0.4rem, 1vw, 0.5rem);
 }
 
-/* --- الإشعارات العائمة --- */
 #notifications {
   position: fixed;
   bottom: clamp(15px, 2vw, 20px); /* استخدام clamp للموقع */
