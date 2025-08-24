@@ -38,7 +38,7 @@ body {
 
 .container {
   max-width:950px;
-  margin:90px auto 40px;
+  margin:100px auto 40px;
   padding:20px;
 }
 
@@ -51,14 +51,15 @@ body {
 }
 .loading-screen.hidden { opacity:0; pointer-events:none; }
 .loader {
-  width:52px; height:52px;
+  width:54px; height:54px;
   border:5px solid var(--glass-border);
   border-top-color:var(--accent-color);
-  border-radius:50%; animation:spin 1s linear infinite;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
 }
 @keyframes spin { to { transform:rotate(360deg);} }
 
-/* شريط الأزرار الصغير */
+/* شريط أدوات داخلي */
 .page-toolbar {
   display:flex;
   gap:10px;
@@ -69,7 +70,7 @@ body {
   background:var(--glass-bg);
   border:1px solid var(--glass-border);
   color:var(--accent-color);
-  width:42px; height:42px;
+  width:44px; height:44px;
   display:flex; align-items:center; justify-content:center;
   border-radius:12px;
   cursor:pointer;
@@ -79,11 +80,12 @@ body {
 }
 .mini-btn:hover {
   background:var(--accent-color);
-  color:var(--text-color);
+  color:#080010;
   transform:translateY(-3px);
   box-shadow:0 6px 18px var(--shadow-color);
 }
 
+/* صورة الأنمي */
 .poster-wrapper {
   display:flex;
   justify-content:center;
@@ -108,6 +110,7 @@ body {
   .poster { max-width:55%; min-height:240px; }
 }
 
+/* صندوق المعلومات */
 .info-box {
   padding:20px;
   margin-bottom:25px;
@@ -153,7 +156,7 @@ body {
 }
 .genres span:hover {
   background:var(--accent-color);
-  color:var(--text-color);
+  color:#080010;
   transform:scale(1.05);
 }
 
@@ -194,7 +197,7 @@ body {
 }
 .icon-btn:hover {
   background:var(--accent-color);
-  color:#fff;
+  color:#080010;
   transform:translateY(-3px);
   box-shadow:0 8px 18px var(--shadow-color);
 }
@@ -209,7 +212,7 @@ body {
 }
 .rating-box:hover {
   background:var(--accent-color);
-  color:#fff;
+  color:#080010;
   transform:scale(1.04);
 }
 
@@ -281,7 +284,7 @@ body {
 }
 .comment-form button:hover {
   background:var(--accent-color);
-  color:#fff;
+  color:#080010;
 }
 
 .comment-warning {
