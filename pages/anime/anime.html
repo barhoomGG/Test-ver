@@ -9,18 +9,28 @@
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="anime.css" />
+  <style>
+    /* حماية إضافية: أي عنصر hidden يصبح display:none ويمنع الأحداث */
+    .hidden { display: none !important; }
+    /* تأكد أن أي overlay مخفي لا يلتقط الأحداث */
+    .notifications-modal.hidden,
+    .settings-sidebar.hidden,
+    .loading-screen.hidden {
+      pointer-events: none !important;
+    }
+  </style>
 </head>
 <body>
   <div id="loadingScreen" class="loading-screen">
     <div class="loader"></div>
   </div>
 
-  <!-- مكونات -->
   <div id="header-container"></div>
   <div id="sidebar-container"></div>
   <div id="notifications-container"></div>
 
-  <main class="main-content glass">
+  <main class="main-content glass" id="mainContent">
+    <!-- سلايدر -->
     <section class="spotlight-slider-section">
       <h2>أنميات مضافة حديثًا</h2>
       <div class="slider-container" id="spotlightSlider">
@@ -33,10 +43,12 @@
       </div>
     </section>
 
+    <!-- البحث -->
     <section class="search-section">
       <input type="search" id="animeSearch" placeholder="ابحث عن أنمي..." aria-label="بحث عن أنمي" autocomplete="off" />
     </section>
 
+    <!-- الفلاتر -->
     <section class="filters-section">
       <button id="genreFilterBtn" class="filter-btn glass-btn"><i class="fas fa-tags"></i> التصنيفات</button>
       <button id="sortFilterBtn" class="filter-btn glass-btn"><i class="fas fa-sort"></i> الترتيب</button>
@@ -45,6 +57,7 @@
       <button id="watchLaterBtn" class="filter-btn glass-btn"><i class="fas fa-clock"></i> مشاهدة لاحقًا</button>
     </section>
 
+    <!-- قوائم -->
     <div id="genreFilterMenu" class="filter-menu glass hidden">
       <div class="filter-header">
         <h3>التصنيفات</h3>
@@ -102,7 +115,30 @@
       componentLoader.loadComponent('sidebar', 'sidebar-container');
       componentLoader.loadComponent('notifications', 'notifications-container');
       componentLoader.loadComponent('footer', 'footer-container');
+
+      // حماية إضافية: إزالة شاشة التحميل بعد 5 ثوانٍ بأي حال
+      setTimeout(() => {
+        const ls = document.getElementById('loadingScreen');
+        if (ls && !ls.classList.contains('hidden')) {
+          console.warn('[anime] Forced hide loading screen (timeout fallback).');
+          ls.classList.add('hidden');
+          ls.remove();
+        }
+      }, 5000);
     });
+
+    // سكربت تشخيصي (يمكنك حذفه لاحقاً)
+    window.debugObstruction = function() {
+      const center = document.elementFromPoint(window.innerWidth/2, window.innerHeight/2);
+      console.log('Center top element:', center);
+      const fullCovers = [...document.querySelectorAll('*')].filter(el=>{
+        const st = getComputedStyle(el);
+        if (!['fixed','absolute'].includes(st.position)) return false;
+        const r = el.getBoundingClientRect();
+        return r.width >= window.innerWidth*0.98 && r.height >= window.innerHeight*0.98 && st.zIndex !== 'auto';
+      });
+      console.log('Full-screen positioned elements:', fullCovers);
+    };
   </script>
   <script type="module" src="anime.js"></script>
   <script src="../../theme.js"></script>
