@@ -3,39 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self';
-                 script-src 'self' 'unsafe-inline';
-                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
-                 font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com;
-                 img-src 'self' data: https:;
-                 connect-src 'self' https://ibraheem.golden33191.workers.dev https://raw.githubusercontent.com;
-                 frame-ancestors 'none';
-                 form-action 'self';">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="X-Frame-Options" content="DENY">
-  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>Pandacine - قائمة الأنمي</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
-        rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="anime.css" />
 </head>
 <body>
-  <!-- شاشة التحميل -->
   <div id="loadingScreen" class="loading-screen">
     <div class="loader"></div>
   </div>
 
-  <!-- حاويات المكونات المشتركة -->
+  <!-- مكونات -->
   <div id="header-container"></div>
   <div id="sidebar-container"></div>
   <div id="notifications-container"></div>
 
   <main class="main-content glass">
-    <!-- Spotlight Slider -->
     <section class="spotlight-slider-section">
       <h2>أنميات مضافة حديثًا</h2>
       <div class="slider-container" id="spotlightSlider">
@@ -48,44 +33,30 @@
       </div>
     </section>
 
-    <!-- البحث -->
     <section class="search-section">
       <input type="search" id="animeSearch" placeholder="ابحث عن أنمي..." aria-label="بحث عن أنمي" autocomplete="off" />
     </section>
 
-    <!-- الفلاتر -->
     <section class="filters-section">
-      <button id="genreFilterBtn" class="filter-btn glass-btn">
-        <i class="fas fa-tags"></i> التصنيفات
-      </button>
-      <button id="sortFilterBtn" class="filter-btn glass-btn">
-        <i class="fas fa-sort"></i> الترتيب
-      </button>
-      <button id="moodFilterBtn" class="filter-btn glass-btn">
-        <i class="fas fa-heartbeat"></i> الحالة النفسية
-      </button>
-      <button id="favoritesBtn" class="filter-btn glass-btn">
-        <i class="fas fa-heart"></i> المفضلة
-      </button>
-      <button id="watchLaterBtn" class="filter-btn glass-btn">
-        <i class="fas fa-clock"></i> مشاهدة لاحقًا
-      </button>
+      <button id="genreFilterBtn" class="filter-btn glass-btn"><i class="fas fa-tags"></i> التصنيفات</button>
+      <button id="sortFilterBtn" class="filter-btn glass-btn"><i class="fas fa-sort"></i> الترتيب</button>
+      <button id="moodFilterBtn" class="filter-btn glass-btn"><i class="fas fa-heartbeat"></i> الحالة النفسية</button>
+      <button id="favoritesBtn" class="filter-btn glass-btn"><i class="fas fa-heart"></i> المفضلة</button>
+      <button id="watchLaterBtn" class="filter-btn glass-btn"><i class="fas fa-clock"></i> مشاهدة لاحقًا</button>
     </section>
 
-    <!-- قائمة التصنيفات -->
     <div id="genreFilterMenu" class="filter-menu glass hidden">
       <div class="filter-header">
         <h3>التصنيفات</h3>
         <button class="close-filter glass-btn"><i class="fas fa-times"></i></button>
       </div>
-      <div class="genres" id="genreFilter" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px"></div>
-      <div style="text-align: center; display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+      <div class="genres" id="genreFilter" style="max-height:300px;overflow-y:auto;margin-bottom:15px"></div>
+      <div style="display:flex;justify-content:center;gap:15px;margin-top:15px;">
         <button id="resetGenresBtn" class="filter-btn glass-btn"><i class="fas fa-undo"></i> إعادة تعيين</button>
         <button id="applyGenresBtn" class="filter-btn glass-btn"><i class="fas fa-check"></i> تم</button>
       </div>
     </div>
 
-    <!-- قائمة الترتيب -->
     <div id="sortFilterMenu" class="filter-menu glass hidden">
       <div class="filter-header">
         <h3>الترتيب</h3>
@@ -100,39 +71,33 @@
       </div>
     </div>
 
-    <!-- قائمة الحالات النفسية -->
     <div id="moodFilterMenu" class="filter-menu glass hidden">
       <div class="filter-header">
         <h3>الحالات النفسية</h3>
         <button class="close-filter glass-btn"><i class="fas fa-times"></i></button>
       </div>
-      <div class="moods" id="moodFilter" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px"></div>
-      <div style="text-align: center; display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+      <div class="moods" id="moodFilter" style="max-height:300px;overflow-y:auto;margin-bottom:15px"></div>
+      <div style="display:flex;justify-content:center;gap:15px;margin-top:15px;">
         <button id="resetMoodsBtn" class="filter-btn glass-btn"><i class="fas fa-undo"></i> إعادة تعيين</button>
         <button id="applyMoodsBtn" class="filter-btn glass-btn"><i class="fas fa-check"></i> تم</button>
       </div>
     </div>
 
-    <!-- جميع الأنميات -->
     <section class="anime-grid-section">
       <div class="grid-toggle-container">
         <h2>جميع الأنميات</h2>
-        <button id="gridToggleBtn" class="glass-btn">
-          <i class="fas fa-th"></i>
-        </button>
+        <button id="gridToggleBtn" class="glass-btn"><i class="fas fa-th"></i></button>
       </div>
       <div class="anime-grid" id="animeGrid"></div>
       <div id="loader" class="loader hidden"></div>
     </section>
   </main>
 
-  <!-- حاوية الفوتر -->
   <div id="footer-container"></div>
 
-  <!-- تحميل ملفات الجذر (مسارات تصاعدية) -->
   <script src="../../component-loader.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
       componentLoader.loadComponent('header', 'header-container');
       componentLoader.loadComponent('sidebar', 'sidebar-container');
       componentLoader.loadComponent('notifications', 'notifications-container');
