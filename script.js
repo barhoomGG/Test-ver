@@ -1,4 +1,5 @@
-// script.js
+// script.js بعد إزالة أكواد الهيدر والسايدبار (أصبحت تُدار من المكونات)
+
 // شاشة التحميل
 window.addEventListener("load", function () {
   setTimeout(function () {
@@ -10,13 +11,13 @@ window.addEventListener("load", function () {
   }, 1500);
 });
 
-// إنشاء النجوم المتساقطة
+// إنشاء النجوم المتساقطة + منطق الصفحة
 document.addEventListener("DOMContentLoaded", function () {
   const starsContainer = document.getElementById("stars");
   const popSound = document.getElementById("popSound");
   const colors = ["pink", "blue", "purple"];
 
-  // إضافة 60 نجمة بشكل عشوائي مع سرعة سقوط مختلفة
+  // إضافة نجوم
   if (starsContainer && popSound) {
     for (let i = 0; i < 60; i++) {
       const star = document.createElement("div");
@@ -35,12 +36,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // التعامل مع التنقل بين الصفحات (الصفحة الرئيسية وتسجيل الدخول)
+  // التعامل مع التنقل بين (الرئيسية / تسجيل الدخول)
   const loginPage = document.getElementById("loginPage");
   const homePage = document.getElementById("homePage");
   const backToHome = document.getElementById("backToHome");
   const loginForm = document.getElementById("loginForm");
-  const userName = document.querySelector(".user-name"); // موجود في sidebar
+  const userName = document.querySelector(".user-name"); // سيتم تحديثه إذا كان موجودًا داخل الـ sidebar component لاحقًا
 
   if (loginPage && homePage && backToHome && loginForm) {
     backToHome.addEventListener("click", () => {
@@ -61,4 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
       homePage.classList.remove("hidden");
     });
   }
+
+  // ملاحظة: أي منطق يتعلق بالهيدر أو القائمة الجانبية أصبح في ملفات المكونات (header.js / sidebar.js)
 });
