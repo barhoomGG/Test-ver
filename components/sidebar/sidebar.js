@@ -1,36 +1,41 @@
 // sidebar.js
-document.addEventListener('DOMContentLoaded', () => {
-  const settingsBtn = document.getElementById('settingsBtn');
-  const settingsMenu = document.getElementById('settingsMenu');
-  const loginLink = document.getElementById('loginLink');
-  const aboutLink = document.getElementById('aboutLink');
+(function() {
+  function setupSidebar() {
+    const loginLink = document.getElementById("loginLink");
+    const aboutLink = document.getElementById("aboutLink");
+    const settingsMenu = document.getElementById("settingsMenu");
 
-  if (settingsBtn && settingsMenu) {
-    settingsBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      settingsMenu.classList.toggle('active');
-    });
+    if (loginLink) {
+      loginLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (window.showNotification) {
+          window.showNotification("جارٍ الانتقال إلى صفحة تسجيل الدخول...");
+        }
+        setTimeout(() => (window.location.href = "login.html"), 500);
+        if (settingsMenu) {
+          settingsMenu.classList.remove("active");
+        }
+      });
+    }
 
-    document.addEventListener('click', (e) => {
-      if (!settingsBtn.contains(e.target) && !settingsMenu.contains(e.target)) {
-        settingsMenu.classList.remove('active');
-      }
-    });
+    if (aboutLink) {
+      aboutLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (window.showNotification) {
+          window.showNotification("جارٍ الانتقال إلى صفحة حول...");
+        }
+        setTimeout(() => (window.location.href = "about.html"), 500);
+        if (settingsMenu) {
+          settingsMenu.classList.remove("active");
+        }
+      });
+    }
   }
 
-  if (loginLink) {
-    loginLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.href = 'login.html';
-      settingsMenu.classList.remove('active');
-    });
+  // تشغيل الإعداد عند تحميل المكون
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupSidebar);
+  } else {
+    setupSidebar();
   }
-
-  if (aboutLink) {
-    aboutLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.href = 'about.html';
-      settingsMenu.classList.remove('active');
-    });
-  }
-});
+})();
