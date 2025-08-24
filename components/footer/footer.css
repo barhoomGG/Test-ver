@@ -1,6 +1,5 @@
-/* footer.css */
 .footer {
-  padding: clamp(1.2rem, 2vw, 2rem) clamp(0.6rem, 1.5vw, 1rem); /* استخدام clamp للهوامش */
+  padding: clamp(1.2rem, 2vw, 2rem) clamp(0.6rem, 1.5vw, 1rem);
   background: var(--navbar-bg);
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--glass-border);
@@ -18,23 +17,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.8rem, 1.5vw, 1rem); /* استخدام clamp للمسافات */
+  gap: clamp(0.8rem, 1.5vw, 1rem);
 }
 
 .footer-logo {
   display: flex;
   align-items: center;
-  gap: clamp(6px, 1.5vw, 8px); /* استخدام clamp للمسافات */
+  gap: clamp(6px, 1.5vw, 8px);
   margin-bottom: clamp(0.4rem, 1vw, 0.5rem);
 }
 
 .footer-logo img {
-  height: clamp(30px, 5vw, 40px); /* استخدام clamp لحجم الصورة */
+  height: clamp(30px, 5vw, 40px);
   width: auto;
 }
 
 .footer-text {
-  font-size: clamp(0.8rem, 2vw, 0.95rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
   color: var(--text-secondary);
   margin: 0;
 }
@@ -42,7 +41,7 @@
 .footer-links {
   display: flex;
   justify-content: center;
-  gap: clamp(0.8rem, 1.5vw, 1.5rem); /* استخدام clamp للمسافات */
+  gap: clamp(0.8rem, 1.5vw, 1.5rem);
   flex-wrap: wrap;
   margin-top: clamp(0.4rem, 1vw, 0.5rem);
 }
@@ -50,9 +49,9 @@
 .footer-link {
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: clamp(0.8rem, 2vw, 0.9rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   font-weight: 600;
-  padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 12px); /* استخدام clamp للهوامش */
+  padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 12px);
   border-radius: 12px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
