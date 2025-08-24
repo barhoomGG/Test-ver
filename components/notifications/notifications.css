@@ -1,4 +1,3 @@
-/* notifications.css */
 /* --- بوب أب الإشعارات --- */
 .notifications-modal {
   position: fixed;
@@ -25,8 +24,8 @@
   border: 1px solid var(--glass-border);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   border-radius: 16px;
-  padding: clamp(1rem, 2vw, 1.5rem); /* استخدام clamp للهوامش */
-  max-width: clamp(350px, 90%, 400px); /* استخدام clamp للعرض */
+  padding: clamp(1rem, 2vw, 1.5rem);
+  max-width: clamp(350px, 90%, 400px);
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
@@ -45,7 +44,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: clamp(0.8rem, 2vw, 1rem); /* استخدام clamp للهوامش */
+  margin-bottom: clamp(0.8rem, 2vw, 1rem);
 }
 
 .notifications-header h3 {
@@ -56,16 +55,16 @@
 .notifications-list {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.8rem, 2vw, 1rem); /* استخدام clamp للمسافات */
+  gap: clamp(0.8rem, 2vw, 1rem);
 }
 
 .notification-item {
-  padding: clamp(0.8rem, 2vw, 1rem); /* استخدام clamp للهوامش */
+  padding: clamp(0.8rem, 2vw, 1rem);
   border-radius: 12px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   color: var(--text-color);
-  font-size: clamp(0.8rem, 2vw, 0.9rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   display: flex;
   align-items: center;
   gap: clamp(0.8rem, 2vw, 1rem);
@@ -82,7 +81,7 @@
 }
 
 .notification-item img {
-  width: clamp(40px, 6vw, 50px); /* استخدام clamp لحجم الصورة */
+  width: clamp(40px, 6vw, 50px);
   height: clamp(40px, 6vw, 50px);
   border-radius: 8px;
   object-fit: cover;
@@ -98,30 +97,31 @@
 }
 
 .notification-item .message {
-  margin-top: clamp(0.4rem, 1vw, 0.5rem); /* استخدام clamp للهوامش */
+  margin-top: clamp(0.4rem, 1vw, 0.5rem);
 }
 
 .notification-item .timestamp {
-  font-size: clamp(0.7rem, 2vw, 0.8rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
   color: var(--text-secondary);
   margin-top: clamp(0.4rem, 1vw, 0.5rem);
 }
 
+/* الإشعارات العائمة */
 #notifications {
   position: fixed;
-  bottom: clamp(15px, 2vw, 20px); /* استخدام clamp للموقع */
+  bottom: clamp(15px, 2vw, 20px);
   right: clamp(15px, 2vw, 20px);
   display: flex;
   flex-direction: column;
-  gap: clamp(8px, 1.5vw, 10px); /* استخدام clamp للمسافات */
+  gap: clamp(8px, 1.5vw, 10px);
   z-index: 1000;
 }
 
 .notification {
   position: relative;
-  padding: clamp(8px, 1.5vw, 10px) clamp(14px, 2vw, 18px); /* استخدام clamp للهوامش */
+  padding: clamp(8px, 1.5vw, 10px) clamp(14px, 2vw, 18px);
   border-radius: 25px;
-  font-size: clamp(0.85rem, 2vw, 0.95rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
   opacity: 0;
   transition: all 0.3s ease;
   pointer-events: none;
@@ -132,4 +132,20 @@
 
 .notification.show {
   opacity: 1;
+}
+
+/* Media Queries للإشعارات */
+@media (max-width: 768px) {
+  .notifications-modal-content {
+    width: 95%;
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notifications-modal-content {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
 }
