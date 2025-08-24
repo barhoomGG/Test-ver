@@ -4,47 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport"
         content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <meta name="description" content="شاهد تفاصيل الأنمي المفضل لديك على PandaCine" />
-  <meta name="keywords" content="أنمي, PandaCine, تفاصيل الأنمي, مشاهدة أنمي" />
-  <meta name="robots" content="index, follow" />
-  <meta http-equiv="X-Frame-Options" content="DENY" />
-  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self';
-                 script-src 'self' 'unsafe-inline';
-                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
-                 font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;
-                 img-src 'self' data: https:;
-                 connect-src 'self' https://ibraheem.golden33191.workers.dev https://libretranslate.de;
-                 frame-ancestors 'none';
-                 form-action 'self';">
   <title>PandaCine - تفاصيل الأنمي</title>
+
+  <!-- خطوط وأيقونات -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
   <link rel="stylesheet" href="anime-details.css" />
+
   <style>
-    /* منع وميض المكوّنات */
-    #header-container, #footer-container, #sidebar-container, #notifications-container {
+    /* ظهور مكونات بدون وميض */
+    #header-container, #sidebar-container, #notifications-container, #footer-container {
       opacity: 0;
       transition: opacity .25s ease;
     }
     .component-ready { opacity: 1 !important; }
+
+    /* منع أي عنصر مخفي من اعتراض اللمس */
+    .hidden, .loading-screen.hidden { pointer-events: none !important; }
+
+    /* حجز ارتفاع للهيدر حتى قبل تحميله */
+    #header-container { min-height: 66px; }
   </style>
 </head>
 <body>
 
-  <!-- شاشة التحميل -->
+  <!-- شاشة تحميل -->
   <div id="loadingScreen" class="loading-screen">
     <div class="loader"></div>
   </div>
 
-  <!-- حاويات المكوّنات المشتركة -->
-  <div id="header-container"></div>
-  <div id="sidebar-container"></div>
-  <div id="notifications-container"></div>
+  <!-- المكونات المشتركة -->
+  <div id="header-container" class="cmp-pending"></div>
+  <div id="sidebar-container" class="cmp-pending"></div>
+  <div id="notifications-container" class="cmp-pending"></div>
 
+  <!-- محتوى الصفحة -->
   <main id="mainContent" class="container glass">
-    <!-- شريط أزرار داخلي للصفحة (ليس بديلاً للهيدر) -->
+    <!-- أزرار داخلية للعودة والمشاركة (مستقلة عن الهيدر) -->
     <div class="page-toolbar">
       <button id="backBtn" class="mini-btn" title="عودة لقائمة الأنمي">
         <i class="fas fa-arrow-right"></i>
@@ -54,15 +52,12 @@
       </button>
     </div>
 
-    <!-- صورة الأنمي -->
     <div class="poster-wrapper">
-      <img id="animePoster" class="poster"
-           src=""
+      <img id="animePoster" class="poster" src=""
            alt="صورة الأنمي"
            onerror="this.src='https://via.placeholder.com/800x450?text=No+Image';" />
     </div>
 
-    <!-- صندوق المعلومات -->
     <section class="info-box glass">
       <h1 id="animeTitle">جارٍ التحميل...</h1>
 
@@ -100,13 +95,11 @@
       </div>
     </section>
 
-    <!-- القصة -->
     <section class="description-box glass">
       <h2><i class="fas fa-book-open"></i> القصة</h2>
       <p id="animeDescription">لا يوجد وصف.</p>
     </section>
 
-    <!-- التعليقات -->
     <section class="comment-section glass">
       <h2><i class="fas fa-comments"></i> التعليقات</h2>
       <div id="commentsList">جارٍ التحميل...</div>
@@ -122,13 +115,13 @@
     </section>
   </main>
 
-  <div id="footer-container"></div>
+  <div id="footer-container" class="cmp-pending"></div>
 
-  <!-- تحميل المكوّنات -->
+  <!-- تحميل المكونات -->
   <script src="../../component-loader.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      // تحميل المكوّنات بنفس أسلوب الصفحات التي تعمل
+      // ترتيب متتابع (لتقليل التعارض)
       await componentLoader.loadComponent('header', 'header-container');
       document.getElementById('header-container')?.classList.add('component-ready');
 
@@ -142,6 +135,7 @@
       document.getElementById('footer-container')?.classList.add('component-ready');
     });
   </script>
+
   <script src="../../theme.js"></script>
   <script type="module" src="anime-details.js"></script>
 </body>
