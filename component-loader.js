@@ -1,60 +1,77 @@
 // component-loader.js
+window.componentLoader = (function() {
+  const cache = new Map();
+  
+  async function loadComponent(componentName, containerId) {
+    try {
+      const container = document.getElementById(containerId);
+      if (!container) {
+        console.error(`Container with id "${containerId}" not found`);
+        return;
+      }
 
-// دالة لتحميل HTML من ملف خارجي
-async function loadHTML(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Failed to load ${url}`);
-  return await response.text();
-}
+      // التحقق من الكاش
+      if (cache.has(componentName)) {
+        const cached = cache.get(componentName);
+        container.innerHTML = cached.html;
+        return;
+      }
 
-// دالة لتحميل CSS وإضافتها إلى الـ head
-function loadCSS(url) {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = url;
-  document.head.appendChild(link);
-}
+      // تحميل HTML
+      const htmlResponse = await fetch(`components/${componentName}/${componentName}.html`);
+      if (!htmlResponse.ok) {
+        throw new Error(`Failed to load ${componentName}.html`);
+      }
+      const html = await htmlResponse.text();
 
-// دالة لتحميل JS وتنفيذها
-function loadJS(url) {
-  const script = document.createElement('script');
-  script.src = url;
-  document.body.appendChild(script);
-}
+      // تحميل CSS
+      const cssResponse = await fetch(`components/${componentName}/${componentName}.css`);
+      if (cssResponse.ok) {
+        const css = await cssResponse.text();
+        
+        // التحقق من وجود الـ style tag مسبقاً
+        const existingStyle = document.querySelector(`style[data-component="${componentName}"]`);
+        if (!existingStyle) {
+          const style = document.createElement('style');
+          style.setAttribute('data-component', componentName);
+          style.textContent = css;
+          document.head.appendChild(style);
+        }
+      }
 
-// تحميل المكونات المشتركة
-async function loadComponents() {
-  try {
-    // تحميل Header
-    const headerHTML = await loadHTML('components/header/header.html');
-    document.body.insertAdjacentHTML('afterbegin', headerHTML);
-    loadCSS('components/header/header.css');
-    loadJS('components/header/header.js');
+      // إدراج HTML
+      container.innerHTML = html;
 
-    // تحميل Sidebar
-    const sidebarHTML = await loadHTML('components/sidebar/sidebar.html');
-    document.body.insertAdjacentHTML('beforeend', sidebarHTML);
-    loadCSS('components/sidebar/sidebar.css');
-    loadJS('components/sidebar/sidebar.js');
+      // تحميل JavaScript
+      try {
+        const jsResponse = await fetch(`components/${componentName}/${componentName}.js`);
+        if (jsResponse.ok) {
+          const js = await jsResponse.text();
+          
+          // التحقق من وجود الـ script tag مسبقاً
+          const existingScript = document.querySelector(`script[data-component="${componentName}"]`);
+          if (!existingScript) {
+            const script = document.createElement('script');
+            script.setAttribute('data-component', componentName);
+            script.textContent = js;
+            document.body.appendChild(script);
+          }
+        }
+      } catch (jsError) {
+        console.log(`No JavaScript file for ${componentName} or error loading it:`, jsError);
+      }
 
-    // تحميل Footer
-    const footerHTML = await loadHTML('components/footer/footer.html');
-    document.body.insertAdjacentHTML('beforeend', footerHTML);
-    loadCSS('components/footer/footer.css');
+      // حفظ في الكاش
+      cache.set(componentName, { html });
 
-    // تحميل Notifications
-    const notificationsHTML = await loadHTML('components/notifications/notifications.html');
-    document.body.insertAdjacentHTML('beforeend', notificationsHTML);
-    loadCSS('components/notifications/notifications.css');
-    loadJS('components/notifications/notifications.js');
-
-    console.log('All components loaded successfully');
-  } catch (error) {
-    console.error('Error loading components:', error);
+      console.log(`Component "${componentName}" loaded successfully`);
+      
+    } catch (error) {
+      console.error(`Error loading component "${componentName}":`, error);
+    }
   }
-}
 
-// تشغيل التحميل عند تحميل الصفحة، بعد theme.js و data-manager.js
-document.addEventListener('DOMContentLoaded', () => {
-  loadComponents();
-});
+  return {
+    loadComponent
+  };
+})();
