@@ -1,121 +1,93 @@
-// component-loader.js (إزالة الوميض + تحميل منسق للمكوّنات)
-// يدعم عمق المجلدات، ويحجز المساحة ويظهر المكونات فقط بعد اكتمال تحميلها.
-
+// component-loader.js (إصدار مستقر مع منع الوميض + كاش بسيط + لوج)
+// يعتمد على تطابق اسم المكون مع أسماء الملفات داخل مجلد المكون.
 window.componentLoader = (function () {
   const cache = new Map();
+  const VERSION = '2025.08.24';
 
-  function computeBaseComponentsPath() {
-    const segments = window.location.pathname.split("/").filter(Boolean);
-    if (segments.length && segments[segments.length - 1].includes(".")) {
-      segments.pop();
-    }
-    if (segments.length === 0) return "./components/";
-    return "../".repeat(segments.length) + "components/";
+  function computeBasePath() {
+    const seg = location.pathname.split('/').filter(Boolean);
+    if (seg.at(-1)?.includes('.')) seg.pop();
+    if (seg.length === 0) return './components/';
+    return '../'.repeat(seg.length) + 'components/';
   }
-  const basePath = computeBaseComponentsPath();
-  console.info("[component-loader] base path =", basePath);
+  const BASE = computeBasePath();
+  console.info('[component-loader] base =', BASE);
 
   async function fetchText(url) {
-    const res = await fetch(url, { cache: "no-cache" });
-    if (!res.ok) throw new Error(res.status + " " + res.statusText);
+    const res = await fetch(url + '?v=' + VERSION, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
     return res.text();
   }
 
   async function loadComponent(name, containerId, options = {}) {
-    const { animate = true, log = true } = options;
+    const { animate = true, log = false } = options;
     const container = document.getElementById(containerId);
     if (!container) {
-      console.warn(`[component-loader] لم يتم العثور على الحاوية: ${containerId}`);
+      console.warn('[component-loader] لا توجد حاوية:', containerId);
       return;
     }
 
-    // إذا محمّل من قبل (وتم تخزين HTML)
     if (cache.has(name)) {
-      const cached = cache.get(name);
-      container.innerHTML = cached.html;
-      revealContainer(container, animate);
-      if (log) console.info(`[component-loader] (cache) component: ${name}`);
+      container.innerHTML = cache.get(name).html;
+      reveal(container, animate);
+      log && console.info('[component-loader] (cache) loaded', name);
       return;
     }
 
-    // إضافة حالة انتظار (لو ما أضفتها أنت في HTML)
-    container.classList.add("cmp-pending");
-    container.setAttribute("aria-busy", "true");
+    container.classList.add('cmp-pending');
+    container.setAttribute('aria-busy', 'true');
 
-    const base = `${basePath}${name}/${name}`;
-    const htmlURL = `${base}.html`;
-    const cssURL = `${base}.css`;
-    const jsURL = `${base}.js`;
+    const base = `${BASE}${name}/${name}`;
+    let htmlText = null;
+    let cssText = null;
+    let jsText = null;
+
+    // نحاول CSS أولاً لتقليل الوميض
+    try { cssText = await fetchText(base + '.css'); } catch {}
+    if (cssText && !document.querySelector(`style[data-component="${name}"]`)) {
+      const style = document.createElement('style');
+      style.dataset.component = name;
+      style.textContent = cssText;
+      document.head.appendChild(style);
+    }
 
     try {
-      // اجلب CSS أولاً (إن وُجد) لتقليل الوميض
-      let cssText = "";
-      try {
-        cssText = await fetchText(cssURL);
-        if (!document.querySelector(`style[data-component="${name}"]`)) {
-          const style = document.createElement("style");
-            style.dataset.component = name;
-          style.textContent = cssText;
-          document.head.appendChild(style);
-        }
-      } catch {
-        /* CSS اختياري */
-      }
-
-      // اجلب HTML
-      const htmlText = await fetchText(htmlURL);
+      htmlText = await fetchText(base + '.html');
       container.innerHTML = htmlText;
-
-      // اجلب JS (اختياري)
-      try {
-        const jsText = await fetchText(jsURL);
-        if (!document.querySelector(`script[data-component="${name}"]`)) {
-          const script = document.createElement("script");
-          script.dataset.component = name;
-          script.textContent = jsText;
-          document.body.appendChild(script);
-        }
-      } catch {
-        /* لا مشكلة */
-      }
-
       cache.set(name, { html: htmlText });
-      // نؤخر الإظهار frame واحد لضمان تطبيق CSS
-      requestAnimationFrame(() => {
-        revealContainer(container, animate);
-        if (log) console.info(`[component-loader] component loaded: ${name}`);
-      });
-    } catch (err) {
-      console.error(`[component-loader] فشل تحميل المكون "${name}":`, err);
-      // نظهر الحاوية حتى لو فشل كي لا تبقى مساحة فارغة
-      revealContainer(container, false);
+    } catch (e) {
+      console.error('[component-loader] فشل HTML للمكون:', name, e.message);
+      container.innerHTML = `<div style="padding:8px;color:#f55;font:12px monospace">فشل تحميل ${name}.html</div>`;
+      reveal(container, false);
+      return;
     }
+
+    // JS اختياري
+    try {
+      jsText = await fetchText(base + '.js');
+      if (jsText && !document.querySelector(`script[data-component="${name}"]`)) {
+        const s = document.createElement('script');
+        s.dataset.component = name;
+        s.textContent = jsText;
+        document.body.appendChild(s);
+      }
+    } catch {}
+
+    requestAnimationFrame(() => reveal(container, animate));
+    log && console.info('[component-loader] loaded', name);
   }
 
-  function revealContainer(container, animate) {
-    container.classList.remove("cmp-pending");
-    container.removeAttribute("aria-busy");
-    container.classList.add("component-mounted");
+  function reveal(container, animate) {
+    container.classList.remove('cmp-pending');
+    container.removeAttribute('aria-busy');
+    container.classList.add('component-mounted');
     if (animate) {
-      container.classList.add("component-ready");
+      container.classList.add('component-ready');
     } else {
-      container.style.visibility = "visible";
-      container.style.opacity = "1";
-      container.style.transform = "none";
+      container.style.opacity = '1';
+      container.style.visibility = 'visible';
     }
   }
 
-  // تحميل مجموعة دفعة واحدة (اختياري)
-  async function loadBatch(configs) {
-    return Promise.all(
-      configs.map(c =>
-        loadComponent(c.name, c.container, c.options || {})
-      )
-    );
-  }
-
-  return {
-    loadComponent,
-    loadBatch
-  };
+  return { loadComponent };
 })();
