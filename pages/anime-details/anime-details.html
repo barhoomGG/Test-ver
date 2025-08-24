@@ -2,10 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <meta name="description" content="شاهد تفاصيل الأنمي المفضل لديك على PandaCine" />
   <meta name="keywords" content="أنمي, PandaCine, تفاصيل الأنمي, مشاهدة أنمي" />
-  <meta name="author" content="PandaCine Team" />
   <meta name="robots" content="index, follow" />
   <meta http-equiv="X-Frame-Options" content="DENY" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
@@ -19,21 +19,16 @@
                  connect-src 'self' https://ibraheem.golden33191.workers.dev https://libretranslate.de;
                  frame-ancestors 'none';
                  form-action 'self';">
-  <title>تفاصيل الأنمي - PandaCine</title>
-  <link rel="stylesheet" href="anime-details.css" />
+  <title>PandaCine - تفاصيل الأنمي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="anime-details.css" />
   <style>
-    /* حجز مساحة تقريبية للهيدر ليمنع القفز */
-    #header-container { min-height: 70px; }
-    #footer-container { min-height: 80px; }
-    .cmp-pending { visibility: hidden; opacity:0; }
-    .component-mounted.component-ready { animation: fadeInCmp .25s ease forwards; }
-    @keyframes fadeInCmp {
-      from { opacity:0; transform: translateY(-6px); }
-      to { opacity:1; transform: translateY(0); visibility:visible; }
+    /* منع وميض المكوّنات */
+    #header-container, #footer-container, #sidebar-container, #notifications-container {
+      opacity: 0;
+      transition: opacity .25s ease;
     }
+    .component-ready { opacity: 1 !important; }
   </style>
 </head>
 <body>
@@ -44,93 +39,107 @@
   </div>
 
   <!-- حاويات المكوّنات المشتركة -->
-  <div id="header-container" class="cmp-pending"></div>
-  <div id="sidebar-container" class="cmp-pending"></div>
-  <div id="notifications-container" class="cmp-pending"></div>
+  <div id="header-container"></div>
+  <div id="sidebar-container"></div>
+  <div id="notifications-container"></div>
 
-  <main class="container glass" id="mainContent">
-    <!-- صورة الأنمي -->
-    <div class="poster-container">
-      <div class="poster-parent">
-        <div class="poster-wrapper">
-          <img id="animePoster" class="poster" src="" alt="صورة الأنمي"
-               onerror="this.src='https://via.placeholder.com/800x450?text=No+Image';" />
-        </div>
-      </div>
+  <main id="mainContent" class="container glass">
+    <!-- شريط أزرار داخلي للصفحة (ليس بديلاً للهيدر) -->
+    <div class="page-toolbar">
+      <button id="backBtn" class="mini-btn" title="عودة لقائمة الأنمي">
+        <i class="fas fa-arrow-right"></i>
+      </button>
+      <button id="shareBtn" class="mini-btn" title="مشاركة">
+        <i class="fas fa-share-alt"></i>
+      </button>
     </div>
 
-    <!-- مربع المعلومات -->
-    <div class="info-box glass">
+    <!-- صورة الأنمي -->
+    <div class="poster-wrapper">
+      <img id="animePoster" class="poster"
+           src=""
+           alt="صورة الأنمي"
+           onerror="this.src='https://via.placeholder.com/800x450?text=No+Image';" />
+    </div>
+
+    <!-- صندوق المعلومات -->
+    <section class="info-box glass">
       <h1 id="animeTitle">جارٍ التحميل...</h1>
+
       <div class="status-box">
         <div class="status-item glass">
           <i class="fas fa-signal"></i>
-          <span id="animeStatus">جارٍ التحميل</span>
+          <span id="animeStatus">—</span>
         </div>
         <div class="status-item glass">
-          <i class="fas fa-star"></i> <span id="animeRating">0.0</span>
+          <i class="fas fa-star"></i>
+          <span id="animeRating">0.0</span>
         </div>
         <div class="status-item glass">
-          <i class="fas fa-film"></i> <span id="episodeCount">غير معروف</span>
+          <i class="fas fa-film"></i>
+          <span id="episodeCount">—</span>
         </div>
       </div>
-      <div class="genres" id="animeGenres">...</div>
+
+      <div id="animeGenres" class="genres">—</div>
 
       <div class="action-buttons">
-        <button class="watch-btn glass-btn" id="watchNowBtn">
+        <button id="watchNowBtn" class="watch-btn">
           <i class="fas fa-play"></i> مشاهدة الآن
         </button>
-        <button class="icon-btn favorite glass-btn" id="favoriteBtn" title="أضف إلى المفضلة">
+        <button id="favoriteBtn" class="icon-btn" title="مفضلة">
           <i class="fas fa-heart"></i>
         </button>
-        <button class="icon-btn watch-later glass-btn" id="watchLaterBtn" title="مشاهدة لاحقًا">
+        <button id="watchLaterBtn" class="icon-btn" title="مشاهدة لاحقًا">
           <i class="fas fa-clock"></i>
-        </button>
-        <button class="icon-btn glass-btn" id="backToListBtn" title="عودة لقائمة الأنمي">
-          <i class="fas fa-arrow-right"></i>
-        </button>
-        <button class="icon-btn glass-btn" id="shareBtn" title="مشاركة">
-          <i class="fas fa-share-alt"></i>
         </button>
       </div>
 
-      <div class="rating-box glass" id="userRatingValue">قيّم هذا الأنمي</div>
-    </div>
+      <div id="userRatingValue" class="rating-box glass">
+        قيّم هذا الأنمي
+      </div>
+    </section>
 
-    <!-- مربع القصة -->
-    <div class="description-box glass">
+    <!-- القصة -->
+    <section class="description-box glass">
       <h2><i class="fas fa-book-open"></i> القصة</h2>
       <p id="animeDescription">لا يوجد وصف.</p>
-    </div>
+    </section>
 
-    <!-- قسم التعليقات -->
-    <div class="comment-section glass">
+    <!-- التعليقات -->
+    <section class="comment-section glass">
       <h2><i class="fas fa-comments"></i> التعليقات</h2>
       <div id="commentsList">جارٍ التحميل...</div>
 
       <div id="commentFormContainer" class="comment-form">
-        <textarea id="commentInput" placeholder="أكتب تعليقك هنا..." rows="3"></textarea>
+        <textarea id="commentInput" rows="3" placeholder="أكتب تعليقك هنا..."></textarea>
         <button id="submitCommentBtn" class="glass-btn">نشر</button>
       </div>
 
       <div id="loginToComment" class="comment-warning">
         يجب تسجيل الدخول للتعليق
       </div>
-    </div>
+    </section>
   </main>
 
-  <div id="footer-container" class="cmp-pending"></div>
+  <div id="footer-container"></div>
 
-  <!-- تحميل المكونات -->
+  <!-- تحميل المكوّنات -->
   <script src="../../component-loader.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
-      await componentLoader.loadBatch([
-        { name: 'header',        container: 'header-container' },
-        { name: 'sidebar',       container: 'sidebar-container' },
-        { name: 'notifications', container: 'notifications-container' },
-        { name: 'footer',        container: 'footer-container' }
-      ]);
+      // تحميل المكوّنات بنفس أسلوب الصفحات التي تعمل
+      await componentLoader.loadComponent('header', 'header-container');
+      document.getElementById('header-container')?.classList.add('component-ready');
+
+      await componentLoader.loadComponent('sidebar', 'sidebar-container');
+      document.getElementById('sidebar-container')?.classList.add('component-ready');
+
+      await componentLoader.loadComponent('notifications', 'notifications-container');
+      document.getElementById('notifications-container')?.classList.add('component-ready');
+
+      await componentLoader.loadComponent('footer', 'footer-container');
+      document.getElementById('footer-container')?.classList.add('component-ready');
     });
   </script>
   <script src="../../theme.js"></script>
