@@ -1,25 +1,30 @@
-// component-loader.js (إصدار مُحسن يعتمد على عدّ المجلدات فقط)
-// يدعم أي عمق: /index.html  => components/
-//          /pages/anime/anime.html => ../../components/
-//          /pages/x/y/z/page.html  => ../../../components/
-
+// component-loader.js (إصدار مُحسَّن + سجلات + حماية)
+// يدعم أي عمق مجلدات ويضيف لوج لتسهيل التشخيص.
 window.componentLoader = (function () {
   const cache = new Map();
 
   function computeBaseComponentsPath() {
-    // استخراج الأجزاء (المجلدات/الملفات) بدون فراغات
-    const segments = window.location.pathname.split("/").filter(Boolean);
-    // إزالة اسم الملف إن وُجد (يحتوي على نقطة)
-    if (segments.length && segments[segments.length - 1].includes(".")) {
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    if (segments.length && segments[segments.length - 1].includes('.')) {
       segments.pop();
     }
-    // الآن segments تمثل المجلدات من الجذر حتى مجلد الصفحة
-    // عدد الصعود = عدد المجلدات (لأن components في الجذر)
     if (segments.length === 0) return "./components/";
     return "../".repeat(segments.length) + "components/";
   }
-
   const basePath = computeBaseComponentsPath();
+  console.info('[component-loader] base components path =', basePath);
+
+  async function fetchText(url, label) {
+    try {
+      const res = await fetch(url, { cache: 'no-cache' });
+      if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+      console.info(`[component-loader] OK: ${label}`, url);
+      return await res.text();
+    } catch (e) {
+      console.warn(`[component-loader] فشل تحميل ${label}:`, url, e.message);
+      return null;
+    }
+  }
 
   async function loadComponent(name, containerId) {
     const container = document.getElementById(containerId);
@@ -27,60 +32,46 @@ window.componentLoader = (function () {
       console.warn(`[component-loader] لم يتم العثور على الحاوية ${containerId}`);
       return;
     }
-
-    // من الكاش
     if (cache.has(name)) {
       container.innerHTML = cache.get(name).html;
+      console.info(`[component-loader] من الكاش: ${name}`);
       return;
     }
 
-    const htmlURL = `${basePath}${name}/${name}.html`;
-    const cssURL  = `${basePath}${name}/${name}.css`;
-    const jsURL   = `${basePath}${name}/${name}.js`;
+    const base = `${basePath}${name}/${name}`;
+    const [html, css, js] = await Promise.all([
+      fetchText(base + '.html', 'HTML'),
+      fetchText(base + '.css', 'CSS'),
+      fetchText(base + '.js', 'JS')
+    ]);
 
-    try {
-      // HTML
-      const htmlRes = await fetch(htmlURL);
-      if (!htmlRes.ok) throw new Error(`فشل تحميل ${htmlURL}`);
-      const html = await htmlRes.text();
+    if (html) {
       container.innerHTML = html;
-
-      // CSS (اختياري)
-      try {
-        const cssRes = await fetch(cssURL);
-        if (cssRes.ok) {
-          const css = await cssRes.text();
-          if (!document.querySelector(`style[data-component="${name}"]`)) {
-            const style = document.createElement("style");
-            style.setAttribute("data-component", name);
-            style.textContent = css;
-            document.head.appendChild(style);
-          }
-        }
-      } catch (e) {
-        console.info(`[component-loader] لا يوجد CSS للمكون ${name}`);
-      }
-
-      // JS (اختياري)
-      try {
-        const jsRes = await fetch(jsURL);
-        if (jsRes.ok) {
-          const js = await jsRes.text();
-          if (!document.querySelector(`script[data-component="${name}"]`)) {
-            const script = document.createElement("script");
-            script.setAttribute("data-component", name);
-            script.textContent = js;
-            document.body.appendChild(script);
-          }
-        }
-      } catch (e) {
-        console.info(`[component-loader] لا يوجد JS للمكون ${name}`);
-      }
-
       cache.set(name, { html });
-    } catch (err) {
-      console.error(`[component-loader] خطأ في تحميل المكون "${name}":`, err);
+    } else {
+      console.error(`[component-loader] المكون ${name} لم يتم تحميل HTML له، لن يُحقن.`);
+      return;
     }
+
+    if (css) {
+      if (!document.querySelector(`style[data-component="${name}"]`)) {
+        const style = document.createElement('style');
+        style.dataset.component = name;
+        style.textContent = css;
+        document.head.appendChild(style);
+      }
+    }
+
+    if (js) {
+      if (!document.querySelector(`script[data-component="${name}"]`)) {
+        const script = document.createElement('script');
+        script.dataset.component = name;
+        script.textContent = js;
+        document.body.appendChild(script);
+      }
+    }
+
+    console.info(`[component-loader] تم تحميل وحقن المكون: ${name}`);
   }
 
   return { loadComponent };
