@@ -1,87 +1,121 @@
-// component-loader.js (إصدار مُحسن يعتمد على عدّ المجلدات فقط)
-// يدعم أي عمق: /index.html  => components/
-//          /pages/anime/anime.html => ../../components/
-//          /pages/x/y/z/page.html  => ../../../components/
+// component-loader.js (إزالة الوميض + تحميل منسق للمكوّنات)
+// يدعم عمق المجلدات، ويحجز المساحة ويظهر المكونات فقط بعد اكتمال تحميلها.
 
 window.componentLoader = (function () {
   const cache = new Map();
 
   function computeBaseComponentsPath() {
-    // استخراج الأجزاء (المجلدات/الملفات) بدون فراغات
     const segments = window.location.pathname.split("/").filter(Boolean);
-    // إزالة اسم الملف إن وُجد (يحتوي على نقطة)
     if (segments.length && segments[segments.length - 1].includes(".")) {
       segments.pop();
     }
-    // الآن segments تمثل المجلدات من الجذر حتى مجلد الصفحة
-    // عدد الصعود = عدد المجلدات (لأن components في الجذر)
     if (segments.length === 0) return "./components/";
     return "../".repeat(segments.length) + "components/";
   }
-
   const basePath = computeBaseComponentsPath();
+  console.info("[component-loader] base path =", basePath);
 
-  async function loadComponent(name, containerId) {
+  async function fetchText(url) {
+    const res = await fetch(url, { cache: "no-cache" });
+    if (!res.ok) throw new Error(res.status + " " + res.statusText);
+    return res.text();
+  }
+
+  async function loadComponent(name, containerId, options = {}) {
+    const { animate = true, log = true } = options;
     const container = document.getElementById(containerId);
     if (!container) {
-      console.warn(`[component-loader] لم يتم العثور على الحاوية ${containerId}`);
+      console.warn(`[component-loader] لم يتم العثور على الحاوية: ${containerId}`);
       return;
     }
 
-    // من الكاش
+    // إذا محمّل من قبل (وتم تخزين HTML)
     if (cache.has(name)) {
-      container.innerHTML = cache.get(name).html;
+      const cached = cache.get(name);
+      container.innerHTML = cached.html;
+      revealContainer(container, animate);
+      if (log) console.info(`[component-loader] (cache) component: ${name}`);
       return;
     }
 
-    const htmlURL = `${basePath}${name}/${name}.html`;
-    const cssURL  = `${basePath}${name}/${name}.css`;
-    const jsURL   = `${basePath}${name}/${name}.js`;
+    // إضافة حالة انتظار (لو ما أضفتها أنت في HTML)
+    container.classList.add("cmp-pending");
+    container.setAttribute("aria-busy", "true");
+
+    const base = `${basePath}${name}/${name}`;
+    const htmlURL = `${base}.html`;
+    const cssURL = `${base}.css`;
+    const jsURL = `${base}.js`;
 
     try {
-      // HTML
-      const htmlRes = await fetch(htmlURL);
-      if (!htmlRes.ok) throw new Error(`فشل تحميل ${htmlURL}`);
-      const html = await htmlRes.text();
-      container.innerHTML = html;
-
-      // CSS (اختياري)
+      // اجلب CSS أولاً (إن وُجد) لتقليل الوميض
+      let cssText = "";
       try {
-        const cssRes = await fetch(cssURL);
-        if (cssRes.ok) {
-          const css = await cssRes.text();
-          if (!document.querySelector(`style[data-component="${name}"]`)) {
-            const style = document.createElement("style");
-            style.setAttribute("data-component", name);
-            style.textContent = css;
-            document.head.appendChild(style);
-          }
+        cssText = await fetchText(cssURL);
+        if (!document.querySelector(`style[data-component="${name}"]`)) {
+          const style = document.createElement("style");
+            style.dataset.component = name;
+          style.textContent = cssText;
+          document.head.appendChild(style);
         }
-      } catch (e) {
-        console.info(`[component-loader] لا يوجد CSS للمكون ${name}`);
+      } catch {
+        /* CSS اختياري */
       }
 
-      // JS (اختياري)
+      // اجلب HTML
+      const htmlText = await fetchText(htmlURL);
+      container.innerHTML = htmlText;
+
+      // اجلب JS (اختياري)
       try {
-        const jsRes = await fetch(jsURL);
-        if (jsRes.ok) {
-          const js = await jsRes.text();
-          if (!document.querySelector(`script[data-component="${name}"]`)) {
-            const script = document.createElement("script");
-            script.setAttribute("data-component", name);
-            script.textContent = js;
-            document.body.appendChild(script);
-          }
+        const jsText = await fetchText(jsURL);
+        if (!document.querySelector(`script[data-component="${name}"]`)) {
+          const script = document.createElement("script");
+          script.dataset.component = name;
+          script.textContent = jsText;
+          document.body.appendChild(script);
         }
-      } catch (e) {
-        console.info(`[component-loader] لا يوجد JS للمكون ${name}`);
+      } catch {
+        /* لا مشكلة */
       }
 
-      cache.set(name, { html });
+      cache.set(name, { html: htmlText });
+      // نؤخر الإظهار frame واحد لضمان تطبيق CSS
+      requestAnimationFrame(() => {
+        revealContainer(container, animate);
+        if (log) console.info(`[component-loader] component loaded: ${name}`);
+      });
     } catch (err) {
-      console.error(`[component-loader] خطأ في تحميل المكون "${name}":`, err);
+      console.error(`[component-loader] فشل تحميل المكون "${name}":`, err);
+      // نظهر الحاوية حتى لو فشل كي لا تبقى مساحة فارغة
+      revealContainer(container, false);
     }
   }
 
-  return { loadComponent };
+  function revealContainer(container, animate) {
+    container.classList.remove("cmp-pending");
+    container.removeAttribute("aria-busy");
+    container.classList.add("component-mounted");
+    if (animate) {
+      container.classList.add("component-ready");
+    } else {
+      container.style.visibility = "visible";
+      container.style.opacity = "1";
+      container.style.transform = "none";
+    }
+  }
+
+  // تحميل مجموعة دفعة واحدة (اختياري)
+  async function loadBatch(configs) {
+    return Promise.all(
+      configs.map(c =>
+        loadComponent(c.name, c.container, c.options || {})
+      )
+    );
+  }
+
+  return {
+    loadComponent,
+    loadBatch
+  };
 })();
