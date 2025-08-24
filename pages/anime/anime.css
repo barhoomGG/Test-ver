@@ -3,22 +3,28 @@
   --bg-color: #050010;
   --text-color: #ffffff;
   --accent-color: #00f0ff;
+  --navbar-bg: rgba(10, 0, 30, 0.92);
+  --navbar-scrolled-bg: rgba(5, 0, 20, 0.98);
   --glass-bg: rgba(0, 240, 255, 0.04);
   --glass-border: rgba(0, 240, 255, 0.12);
   --shadow-color: rgba(0, 240, 255, 0.25);
   --text-secondary: #b0e0ff;
   --gradient: linear-gradient(135deg, #00f0ff, #c158dc);
+  --sidebar-bg: linear-gradient(180deg, rgba(0, 240, 255, 0.04), rgba(15, 15, 25, 0.94));
 }
 
 .theme-purple {
   --bg-color: #0d0225;
   --text-color: #ffffff;
   --accent-color: #7f5af0;
+  --navbar-bg: rgba(28, 0, 65, 0.88);
+  --navbar-scrolled-bg: rgba(18, 0, 40, 0.95);
   --glass-bg: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(255, 255, 255, 0.15);
   --shadow-color: rgba(127, 90, 240, 0.35);
   --text-secondary: #c4b8ff;
   --gradient: linear-gradient(135deg, #a78bfa, #7f5af0);
+  --sidebar-bg: linear-gradient(180deg, rgba(127, 90, 240, 0.06), rgba(25, 15, 40, 0.94));
 }
 
 /* --- أساسيات الصفحة --- */
@@ -28,7 +34,7 @@ body {
   background: var(--bg-color);
   color: var(--text-color);
   direction: rtl;
-  padding-top: clamp(60px, 8vw, 70px); /* لتجنب التداخل مع الهيدر */
+  padding-top: clamp(60px, 8vw, 70px);
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
 }
@@ -38,13 +44,14 @@ body {
   border-radius: 16px;
   border: 1px solid var(--glass-border);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  background: var(--glass-bg);
   backdrop-filter: blur(10px);
   @supports not (backdrop-filter: blur(10px)) {
     background: rgba(10, 0, 30, 0.92);
   }
 }
 
-/* --- شاشة التحميل --- */
+/* --- بقية الأنماط --- */
 .loading-screen {
   position: fixed;
   top: 0;
@@ -80,14 +87,12 @@ body {
   }
 }
 
-/* --- المحتوى الرئيسي --- */
 .main-content {
   max-width: 1100px;
   margin: clamp(80px, 10vw, 100px) auto clamp(20px, 3vw, 30px) auto;
   padding: clamp(0.8rem, 2vw, 1rem);
 }
 
-/* --- البحث --- */
 .search-section {
   margin-bottom: clamp(15px, 2vw, 20px);
   text-align: center;
@@ -115,7 +120,6 @@ body {
   box-shadow: 0 0 12px var(--shadow-color);
 }
 
-/* --- الفلاتر --- */
 .filters-section {
   display: flex;
   gap: clamp(10px, 2vw, 15px);
@@ -164,7 +168,6 @@ body {
   box-shadow: 0 0 12px var(--shadow-color);
 }
 
-/* --- قوائم الفلاتر --- */
 .filter-menu {
   background: var(--glass-bg);
   border-radius: 16px;
@@ -702,12 +705,16 @@ body {
   box-shadow: 0 0 10px var(--shadow-color);
 }
 
-/* --- Media Queries --- */
+/* --- Media Queries المدمجة للتغييرات الهيكلية --- */
+
+/* دمج جميع التغييرات الهيكلية للشاشات بمقاس أقل من 768px */
 @media (max-width: 768px) {
+  /* الشبكة: تغييرات هيكلية في عدد الأعمدة */
   .anime-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  /* السلايدر: تحسينات لضمان ظهور رقم الحلقة */
   .slider-overlay {
     min-height: clamp(180px, 30vw, 220px);
     justify-content: flex-end;
@@ -734,6 +741,7 @@ body {
     right: clamp(10px, 2vw, 15px);
   }
 
+  /* الشبكة ثلاثية الأعمدة: تغييرات هيكلية */
   .anime-grid.three-columns > .anime-card {
     min-height: clamp(220px, 40vw, 240px);
   }
@@ -751,11 +759,14 @@ body {
   }
 }
 
+/* دمج جميع التغييرات الهيكلية للشاشات بمقاس أقل من 480px */
 @media (max-width: 480px) {
+  /* الشبكة: تغييرات هيكلية في عدد الأعمدة */
   .anime-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  /* السلايدر: تحسينات للشاشات الصغيرة */
   .slider-overlay {
     min-height: clamp(140px, 35vw, 160px);
     padding-bottom: clamp(12px, 2vw, 18px);
@@ -781,6 +792,7 @@ body {
     right: clamp(8px, 2vw, 15px);
   }
 
+  /* الشبكة ثلاثية الأعمدة: تغييرات هيكلية */
   .anime-grid.three-columns > .anime-card {
     min-height: clamp(200px, 40vw, 220px);
   }
@@ -798,7 +810,9 @@ body {
   }
 }
 
+/* دمج التغييرات الهيكلية للسلايدر في النطاق المتوسط (481px - 780px) */
 @media (min-width: 481px) and (max-width: 780px) {
+  /* السلايدر: تحسينات للنطاق المتوسط */
   .slider-overlay {
     min-height: clamp(160px, 7vw, 220px);
     padding-bottom: clamp(15px, 2vw, 20px);
@@ -825,11 +839,13 @@ body {
   }
 }
 
+/* تحسينات إضافية لمنع التداخل في جميع الأحجام */
 .slider-overlay h3 {
   line-height: 1.3;
   max-height: 2.6em;
 }
 
+/* تحسينات للشاشات الصغيرة جدًا */
 @media (max-width: 360px) {
   .slider-overlay h3 {
     max-width: 85%;
