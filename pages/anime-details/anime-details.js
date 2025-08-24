@@ -2,47 +2,42 @@ import DataManager from '../../data-manager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // تطبيق الثيم
+  // الثيم
   (function applyTheme(){
     const saved = localStorage.getItem('theme');
     document.documentElement.classList.toggle('theme-purple', saved === 'purple');
   })();
 
-  // عناصر DOM
-  const params            = new URLSearchParams(location.search);
-  const animeId           = params.get('id');
-  const loadingScreen     = document.getElementById('loadingScreen');
-  const posterEl          = document.getElementById('animePoster');
-  const titleEl           = document.getElementById('animeTitle');
-  const genresEl          = document.getElementById('animeGenres');
-  const ratingEl          = document.getElementById('animeRating');
-  const episodesEl        = document.getElementById('episodeCount');
-  const statusEl          = document.getElementById('animeStatus');
-  const descEl            = document.getElementById('animeDescription');
-  const watchBtn          = document.getElementById('watchNowBtn');
-  const favoriteBtn       = document.getElementById('favoriteBtn');
-  const watchLaterBtn     = document.getElementById('watchLaterBtn');
-  const backBtn           = document.getElementById('backBtn');
-  const shareBtn          = document.getElementById('shareBtn');
-  const ratingBox         = document.getElementById('userRatingValue');
-  const commentForm       = document.getElementById('commentFormContainer');
-  const commentInput      = document.getElementById('commentInput');
-  const submitCommentBtn  = document.getElementById('submitCommentBtn');
-  const commentsList      = document.getElementById('commentsList');
-  const loginToComment    = document.getElementById('loginToComment');
+  // عناصر
+  const params           = new URLSearchParams(location.search);
+  const animeId          = params.get('id');
+  const loadingScreen    = document.getElementById('loadingScreen');
+  const posterEl         = document.getElementById('animePoster');
+  const titleEl          = document.getElementById('animeTitle');
+  const genresEl         = document.getElementById('animeGenres');
+  const ratingEl         = document.getElementById('animeRating');
+  const episodesEl       = document.getElementById('episodeCount');
+  const statusEl         = document.getElementById('animeStatus');
+  const descEl           = document.getElementById('animeDescription');
+  const watchBtn         = document.getElementById('watchNowBtn');
+  const favoriteBtn      = document.getElementById('favoriteBtn');
+  const watchLaterBtn    = document.getElementById('watchLaterBtn');
+  const backBtn          = document.getElementById('backBtn');
+  const shareBtn         = document.getElementById('shareBtn');
+  const ratingBox        = document.getElementById('userRatingValue');
+  const commentForm      = document.getElementById('commentFormContainer');
+  const commentInput     = document.getElementById('commentInput');
+  const submitCommentBtn = document.getElementById('submitCommentBtn');
+  const commentsList     = document.getElementById('commentsList');
+  const loginToComment   = document.getElementById('loginToComment');
 
-  const isLoggedIn        = localStorage.getItem('isLoggedIn') === 'true';
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-  // دالة إشعار موحدة (تنتظر المكوّن إذا تأخر)
-  function notify(msg, type='info'){
+  function notify(msg, type='info') {
     if (window.showNotification) {
       window.showNotification(msg, type);
     } else {
-      // إعادة المحاولة بعد لحظة (مرة واحدة يكفي لمعظم الحالات)
-      setTimeout(()=> {
-        if (window.showNotification) window.showNotification(msg, type);
-        else console.log(`[${type}] ${msg}`);
-      }, 200);
+      console.log(`[${type}] ${msg}`);
     }
   }
 
@@ -57,16 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // زر العودة
   backBtn?.addEventListener('click', () => {
-    // لو المستخدم فعلاً جاء من صفحة الأنمي
     if (document.referrer && document.referrer.includes('anime.html')) {
       history.back();
       return;
     }
-    // توجيه صريح
     location.href = '../anime/anime.html';
   });
 
-  // زر المشاركة
+  // مشاركة
   shareBtn?.addEventListener('click', () => {
     const url = location.href;
     if (navigator.share) {
@@ -130,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     notify('نظام التقييم قادم قريباً');
   });
 
-  // التعليقات (محلي)
+  // التعليقات
   submitCommentBtn?.addEventListener('click', () => {
     if (!isLoggedIn) { notify('يجب تسجيل الدخول للتعليق'); return; }
     const text = commentInput.value.trim();
@@ -185,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return map[String(status).toLowerCase()] || status;
   }
 
-  // إخفاء شاشة التحميل
   function hideLoader() {
     if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
       loadingScreen.classList.add('hidden');
@@ -211,15 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
         genresEl.textContent = 'لا توجد تصنيفات';
       }
     }
-    // ترجمة (مرة واحدة)
     if (!animeData.translatedDescription) {
       const trans = await translateDescription(animeData.description);
       animeData.translatedDescription = trans;
-      // تحديث الكاش
-      const cached = JSON.parse(localStorage.getItem(`anime_${animeId}`) || 'null');
+      const cacheKey = `anime_${animeId}`;
+      const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
       if (cached) {
         cached.translatedDescription = trans;
-        localStorage.setItem(`anime_${animeId}`, JSON.stringify(cached));
+        localStorage.setItem(cacheKey, JSON.stringify(cached));
       }
     }
     descEl && (descEl.textContent = animeData.translatedDescription || animeData.description);
@@ -234,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // كاش
     const cacheKey = `anime_${animeId}`;
     const TTL = 60000;
     const cachedRaw = localStorage.getItem(cacheKey);
@@ -305,6 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 350);
   });
 
+  // بدء
   loadAnimeData();
   loadComments();
 });
