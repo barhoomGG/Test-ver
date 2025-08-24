@@ -1,311 +1,310 @@
-
 import DataManager from '../../data-manager.js';
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
 
-  /* === الثيم === */
-  function applySavedTheme() {
-    const savedTheme = localStorage.getItem("theme");
-    document.documentElement.classList.toggle("theme-purple", savedTheme === "purple");
-  }
-  applySavedTheme();
+  // تطبيق الثيم
+  (function applyTheme(){
+    const saved = localStorage.getItem('theme');
+    document.documentElement.classList.toggle('theme-purple', saved === 'purple');
+  })();
 
-  /* === عناصر DOM === */
-  const params = new URLSearchParams(window.location.search);
-  const animeId = params.get("id");
-  const loadingScreen = document.getElementById("loadingScreen");
-  const poster = document.getElementById("animePoster");
-  const title = document.getElementById("animeTitle");
-  const genresEl = document.getElementById("animeGenres");
-  const ratingEl = document.getElementById("animeRating");
-  const episodeCountEl = document.getElementById("episodeCount");
-  const statusEl = document.getElementById("animeStatus");
-  const descriptionEl = document.getElementById("animeDescription");
-  const watchBtn = document.getElementById("watchNowBtn");
-  const favoriteBtn = document.getElementById("favoriteBtn");
-  const watchLaterBtn = document.getElementById("watchLaterBtn");
-  const userRatingValue = document.getElementById("userRatingValue");
-  const backToListBtn = document.getElementById("backToListBtn");
-  const shareBtn = document.getElementById("shareBtn");
-  const commentForm = document.getElementById("commentFormContainer");
-  const commentInput = document.getElementById("commentInput");
-  const submitCommentBtn = document.getElementById("submitCommentBtn");
-  const commentsList = document.getElementById("commentsList");
-  const loginToComment = document.getElementById("loginToComment");
+  // عناصر DOM
+  const params            = new URLSearchParams(location.search);
+  const animeId           = params.get('id');
+  const loadingScreen     = document.getElementById('loadingScreen');
+  const posterEl          = document.getElementById('animePoster');
+  const titleEl           = document.getElementById('animeTitle');
+  const genresEl          = document.getElementById('animeGenres');
+  const ratingEl          = document.getElementById('animeRating');
+  const episodesEl        = document.getElementById('episodeCount');
+  const statusEl          = document.getElementById('animeStatus');
+  const descEl            = document.getElementById('animeDescription');
+  const watchBtn          = document.getElementById('watchNowBtn');
+  const favoriteBtn       = document.getElementById('favoriteBtn');
+  const watchLaterBtn     = document.getElementById('watchLaterBtn');
+  const backBtn           = document.getElementById('backBtn');
+  const shareBtn          = document.getElementById('shareBtn');
+  const ratingBox         = document.getElementById('userRatingValue');
+  const commentForm       = document.getElementById('commentFormContainer');
+  const commentInput      = document.getElementById('commentInput');
+  const submitCommentBtn  = document.getElementById('submitCommentBtn');
+  const commentsList      = document.getElementById('commentsList');
+  const loginToComment    = document.getElementById('loginToComment');
 
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const isLoggedIn        = localStorage.getItem('isLoggedIn') === 'true';
 
-  /* === دالة إشعار موحّدة === */
-  function notify(msg, type = 'info') {
+  // دالة إشعار موحدة (تنتظر المكوّن إذا تأخر)
+  function notify(msg, type='info'){
     if (window.showNotification) {
       window.showNotification(msg, type);
     } else {
-      console.log(`[${type}] ${msg}`);
+      // إعادة المحاولة بعد لحظة (مرة واحدة يكفي لمعظم الحالات)
+      setTimeout(()=> {
+        if (window.showNotification) window.showNotification(msg, type);
+        else console.log(`[${type}] ${msg}`);
+      }, 200);
     }
   }
 
-  /* === واجهة المستخدم حسب تسجيل الدخول === */
+  // حالة التعليقات حسب تسجيل الدخول
   if (isLoggedIn) {
-    commentForm && (commentForm.style.display = "flex");
-    loginToComment && (loginToComment.style.display = "none");
+    commentForm && (commentForm.style.display = 'flex');
+    loginToComment && (loginToComment.style.display = 'none');
   } else {
-    commentForm && (commentForm.style.display = "none");
-    loginToComment && (loginToComment.style.display = "block");
+    commentForm && (commentForm.style.display = 'none');
+    loginToComment && (loginToComment.style.display = 'block');
   }
 
-  /* === أزرار عامة === */
-  backToListBtn?.addEventListener("click", () => {
-    notify("جارٍ العودة لقائمة الأنمي...");
-    setTimeout(()=> window.location.href = "../anime/anime.html", 400);
+  // زر العودة
+  backBtn?.addEventListener('click', () => {
+    // لو المستخدم فعلاً جاء من صفحة الأنمي
+    if (document.referrer && document.referrer.includes('anime.html')) {
+      history.back();
+      return;
+    }
+    // توجيه صريح
+    location.href = '../anime/anime.html';
   });
 
-  shareBtn?.addEventListener("click", () => {
+  // زر المشاركة
+  shareBtn?.addEventListener('click', () => {
+    const url = location.href;
     if (navigator.share) {
-      navigator.share({ title: document.title, url: location.href })
-        .then(()=>notify("تمت المشاركة بنجاح","success"))
-        .catch(()=>notify("تعذر المشاركة","error"));
+      navigator.share({ title: document.title, url })
+        .then(()=>notify('تمت المشاركة بنجاح','success'))
+        .catch(()=>notify('أُلغيَت المشاركة','warning'));
     } else {
-      navigator.clipboard.writeText(location.href)
-        .then(()=>notify("تم نسخ الرابط","success"))
-        .catch(()=>notify("تعذر نسخ الرابط","error"));
+      navigator.clipboard.writeText(url)
+        .then(()=>notify('تم نسخ الرابط','success'))
+        .catch(()=>notify('تعذر نسخ الرابط','error'));
     }
   });
 
-  /* === المفضلة === */
+  // مفضلة
   if (favoriteBtn) {
-    const updateFavState = () => {
-      const ids = JSON.parse(localStorage.getItem("favorites") || "[]");
-      favoriteBtn.classList.toggle("active", ids.includes(animeId));
-    };
-    favoriteBtn.addEventListener("click", () => {
-      if (!isLoggedIn) { notify("يجب تسجيل الدخول لإضافة للمفضلة"); return; }
-      let ids = JSON.parse(localStorage.getItem("favorites") || "[]");
-      if (ids.includes(animeId)) {
-        ids = ids.filter(id => id !== animeId);
-        notify("أزيل من المفضلة");
+    function update() {
+      const fav = JSON.parse(localStorage.getItem('favorites') || '[]');
+      favoriteBtn.classList.toggle('active', fav.includes(animeId));
+    }
+    favoriteBtn.addEventListener('click', () => {
+      if (!isLoggedIn) { notify('يجب تسجيل الدخول لإضافة للمفضلة'); return; }
+      let fav = JSON.parse(localStorage.getItem('favorites') || '[]');
+      if (fav.includes(animeId)) {
+        fav = fav.filter(id => id !== animeId);
+        notify('أزيل من المفضلة');
       } else {
-        ids.push(animeId);
-        notify("أضيف إلى المفضلة","success");
+        fav.push(animeId);
+        notify('أضيف للمفضلة','success');
       }
-      localStorage.setItem("favorites", JSON.stringify(ids));
-      updateFavState();
+      localStorage.setItem('favorites', JSON.stringify(fav));
+      update();
     });
-    updateFavState();
+    update();
   }
 
-  /* === مشاهدة لاحقاً === */
+  // مشاهدة لاحقاً
   if (watchLaterBtn) {
-    const updateWLState = () => {
-      const ids = JSON.parse(localStorage.getItem("watchLater") || "[]");
-      watchLaterBtn.classList.toggle("active", ids.includes(animeId));
-    };
-    watchLaterBtn.addEventListener("click", () => {
-      if (!isLoggedIn) { notify("يجب تسجيل الدخول لإضافة للمشاهدة لاحقاً"); return; }
-      let ids = JSON.parse(localStorage.getItem("watchLater") || "[]");
-      if (ids.includes(animeId)) {
-        ids = ids.filter(id => id !== animeId);
-        notify("أزيل من مشاهدة لاحقاً");
+    function update() {
+      const wl = JSON.parse(localStorage.getItem('watchLater') || '[]');
+      watchLaterBtn.classList.toggle('active', wl.includes(animeId));
+    }
+    watchLaterBtn.addEventListener('click', () => {
+      if (!isLoggedIn) { notify('يجب تسجيل الدخول لإضافة للمشاهدة لاحقاً'); return; }
+      let wl = JSON.parse(localStorage.getItem('watchLater') || '[]');
+      if (wl.includes(animeId)) {
+        wl = wl.filter(id => id !== animeId);
+        notify('أزيل من مشاهدة لاحقاً');
       } else {
-        ids.push(animeId);
-        notify("أضيف إلى مشاهدة لاحقاً","success");
+        wl.push(animeId);
+        notify('أضيف إلى مشاهدة لاحقاً','success');
       }
-      localStorage.setItem("watchLater", JSON.stringify(ids));
-      updateWLState();
+      localStorage.setItem('watchLater', JSON.stringify(wl));
+      update();
     });
-    updateWLState();
+    update();
   }
 
-  /* === تقييم المستخدم (مستقبلي) === */
-  userRatingValue?.addEventListener("click", () => {
-    if (!isLoggedIn) { notify("يجب تسجيل الدخول"); return; }
-    notify("نظام التقييم قادم قريباً");
+  // تقييم (مستقبلي)
+  ratingBox?.addEventListener('click', () => {
+    if (!isLoggedIn) { notify('سجّل الدخول أولاً'); return; }
+    notify('نظام التقييم قادم قريباً');
   });
 
-  /* === التعليقات (محلي) === */
-  submitCommentBtn?.addEventListener("click", () => {
-    if (!isLoggedIn) { notify("يجب تسجيل الدخول للتعليق"); return; }
-    const content = commentInput?.value.trim();
-    if (!content) { notify("اكتب تعليقاً أولاً"); return; }
+  // التعليقات (محلي)
+  submitCommentBtn?.addEventListener('click', () => {
+    if (!isLoggedIn) { notify('يجب تسجيل الدخول للتعليق'); return; }
+    const text = commentInput.value.trim();
+    if (!text) { notify('اكتب تعليقاً أولاً'); return; }
     const key = `comments_${animeId}`;
-    const comments = JSON.parse(localStorage.getItem(key) || "[]");
-    const username = localStorage.getItem("username") || "مستخدم مجهول";
-    comments.push({ content, username, createdAt: new Date().toISOString() });
-    localStorage.setItem(key, JSON.stringify(comments));
-    commentInput.value = "";
-    notify("تم إضافة التعليق","success");
+    const arr = JSON.parse(localStorage.getItem(key) || '[]');
+    const username = localStorage.getItem('username') || 'مستخدم';
+    arr.push({ content: text, username, createdAt: new Date().toISOString() });
+    localStorage.setItem(key, JSON.stringify(arr));
+    commentInput.value = '';
+    notify('تم نشر التعليق','success');
     loadComments();
   });
 
   function loadComments() {
     if (!commentsList) return;
     const key = `comments_${animeId}`;
-    const comments = JSON.parse(localStorage.getItem(key) || "[]");
-    commentsList.innerHTML = "";
-    if (comments.length === 0) {
-      commentsList.innerHTML = "<p>لا توجد تعليقات بعد.</p>";
+    const arr = JSON.parse(localStorage.getItem(key) || '[]')
+      .sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+    commentsList.innerHTML = '';
+    if (arr.length === 0) {
+      commentsList.innerHTML = '<p>لا توجد تعليقات بعد.</p>';
       return;
     }
-    comments
-      .sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt))
-      .forEach(c => {
-        const div = document.createElement("div");
-        div.className = "comment";
-        div.innerHTML = `<p><strong>${c.username}</strong>:</p><p>${c.content}</p>`;
-        commentsList.appendChild(div);
-      });
+    arr.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'comment';
+      div.innerHTML = `<p><strong>${c.username}</strong>:</p><p>${c.content}</p>`;
+      commentsList.appendChild(div);
+    });
   }
 
-  /* === ترجمة الوصف (خارجي) === */
+  // ترجمة الوصف (اختياري)
   async function translateDescription(desc) {
-    if (!desc || desc === "لا يوجد وصف.") return desc;
+    if (!desc || desc === 'لا يوجد وصف.') return desc;
     try {
-      const res = await fetch('https://libretranslate.de/translate', {
+      const r = await fetch('https://libretranslate.de/translate', {
         method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body:JSON.stringify({ q:desc, source:"en", target:"ar", format:"text" })
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ q:desc, source:'en', target:'ar', format:'text' })
       });
-      const data = await res.json();
+      const data = await r.json();
       return data.translatedText || desc;
-    } catch(e){
-      console.error("خطأ ترجمة:", e);
+    } catch {
       return desc;
     }
   }
 
   function translateStatus(status) {
-    const map = { 'ongoing':'مستمر', 'completed':'مكتمل', 'dropped':'متوقف', 'soon':'قريبًا' };
-    if (!status) return "غير معروف";
+    if (!status) return 'غير معروف';
+    const map = { ongoing:'مستمر', completed:'مكتمل', dropped:'متوقف', soon:'قريباً' };
     return map[String(status).toLowerCase()] || status;
   }
 
-  /* === تحميل بيانات الأنمي === */
+  // إخفاء شاشة التحميل
+  function hideLoader() {
+    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+      loadingScreen.classList.add('hidden');
+      setTimeout(()=> loadingScreen.remove(), 500);
+    }
+  }
+
+  async function updateUI(animeData) {
+    posterEl && (posterEl.src = animeData.image);
+    titleEl && (titleEl.textContent = animeData.title);
+    ratingEl && (ratingEl.textContent = animeData.imdb);
+    statusEl && (statusEl.textContent = translateStatus(animeData.status));
+    episodesEl && (episodesEl.textContent = animeData.totalEpisodes);
+    if (genresEl) {
+      genresEl.innerHTML = '';
+      if (animeData.genres?.length) {
+        animeData.genres.forEach(g => {
+          const span = document.createElement('span');
+          span.textContent = g;
+          genresEl.appendChild(span);
+        });
+      } else {
+        genresEl.textContent = 'لا توجد تصنيفات';
+      }
+    }
+    // ترجمة (مرة واحدة)
+    if (!animeData.translatedDescription) {
+      const trans = await translateDescription(animeData.description);
+      animeData.translatedDescription = trans;
+      // تحديث الكاش
+      const cached = JSON.parse(localStorage.getItem(`anime_${animeId}`) || 'null');
+      if (cached) {
+        cached.translatedDescription = trans;
+        localStorage.setItem(`anime_${animeId}`, JSON.stringify(cached));
+      }
+    }
+    descEl && (descEl.textContent = animeData.translatedDescription || animeData.description);
+  }
+
   async function loadAnimeData() {
     if (!animeId) {
-      title && (title.textContent = "لم يتم العثور على الأنمي");
-      notify("معرف الأنمي غير موجود","error");
+      titleEl && (titleEl.textContent = 'لم يتم العثور على الأنمي');
+      notify('معرف الأنمي مفقود','error');
       hideLoader();
       loadComments();
       return;
     }
 
-    const timeout = setTimeout(() => {
-      notify("انتهت مهلة التحميل","warning");
-      hideLoader();
-    }, 7000);
-
-    // محاولة استخدام الكاش
+    // كاش
     const cacheKey = `anime_${animeId}`;
     const TTL = 60000;
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) {
+    const cachedRaw = localStorage.getItem(cacheKey);
+    if (cachedRaw) {
       try {
-        const obj = JSON.parse(cached);
-        if (Date.now() - obj.timestamp < TTL) {
-          await updateUI(obj);
+        const cached = JSON.parse(cachedRaw);
+        if (Date.now() - cached.timestamp < TTL) {
+          await updateUI(cached);
           loadComments();
-          clearTimeout(timeout);
           hideLoader();
           return;
         }
-      } catch {
-        localStorage.removeItem(cacheKey);
-      }
+      } catch { localStorage.removeItem(cacheKey); }
     }
 
     try {
-      const result = await DataManager.getAnimeList();
-      if (!result?.data || !Array.isArray(result.data)) throw new Error("بيانات غير صالحة");
-      const anime = result.data.find(a => a.id === animeId);
-      if (!anime) {
-        title && (title.textContent = "الأنمي غير موجود");
-        notify("لم يتم العثور على الأنمي","warning");
-        clearTimeout(timeout);
-        hideLoader();
+      const data = await DataManager.getAnimeList();
+      if (!data?.data || !Array.isArray(data.data)) throw new Error('بيانات غير صالحة');
+      const found = data.data.find(a => a.id === animeId);
+      if (!found) {
+        titleEl && (titleEl.textContent = 'الأنمي غير موجود');
+        notify('الأنمي غير موجود','warning');
         loadComments();
+        hideLoader();
         return;
       }
       const animeData = {
-        id: anime.id,
-        image: anime.cover || anime.poster || "https://via.placeholder.com/800x450?text=No+Image",
-        title: anime.title || "بدون عنوان",
-        imdb: anime.rating ? Number(anime.rating).toFixed(1) : "0.0",
-        description: anime.description || "لا يوجد وصف.",
-        status: anime.state || "غير معروف",
-        totalEpisodes: anime.totalEpisodes ? `${anime.totalEpisodes} حلقة` : "غير معروف",
-        genres: Array.isArray(anime.category) ? anime.category : ["لا توجد تصنيفات"],
-        currentEpisode: anime.currentEpisode || 0,
+        id: found.id,
+        image: found.cover || found.poster || 'https://via.placeholder.com/800x450?text=No+Image',
+        title: found.title || 'بدون عنوان',
+        imdb: found.rating ? Number(found.rating).toFixed(1) : '0.0',
+        description: found.description || 'لا يوجد وصف.',
+        status: found.state || 'غير معروف',
+        totalEpisodes: found.totalEpisodes ? `${found.totalEpisodes} حلقة` : 'غير معروف',
+        genres: Array.isArray(found.category) ? found.category : ['لا توجد تصنيفات'],
+        currentEpisode: found.currentEpisode || 0,
         timestamp: Date.now()
       };
       localStorage.setItem(cacheKey, JSON.stringify(animeData));
       await updateUI(animeData);
       loadComments();
-    } catch(e){
-      console.error("خطأ الجلب:", e);
-      title && (title.textContent = "حدث خطأ في التحميل");
-      notify("خطأ أثناء تحميل البيانات","error");
+    } catch (e) {
+      console.error(e);
+      titleEl && (titleEl.textContent = 'خطأ في تحميل البيانات');
+      notify('حدث خطأ أثناء التحميل','error');
     } finally {
-      clearTimeout(timeout);
       hideLoader();
     }
   }
 
-  async function updateUI(animeData) {
-    poster && (poster.src = animeData.image);
-    title && (title.textContent = animeData.title);
-    ratingEl && (ratingEl.textContent = animeData.imdb);
-    statusEl && (statusEl.textContent = translateStatus(animeData.status));
-    episodeCountEl && (episodeCountEl.textContent = animeData.totalEpisodes);
-    if (genresEl) {
-      genresEl.innerHTML = "";
-      if (Array.isArray(animeData.genres) && animeData.genres.length) {
-        animeData.genres.forEach(g => {
-          const span = document.createElement("span");
-            span.textContent = g;
-          genresEl.appendChild(span);
-        });
-      } else {
-        genresEl.textContent = "لا توجد تصنيفات";
-      }
+  // زر مشاهدة الآن
+  watchBtn?.addEventListener('click', () => {
+    notify('جارٍ التحقق من الحلقات...');
+    const cachedRaw = localStorage.getItem(`anime_${animeId}`);
+    let episode = 0;
+    if (cachedRaw) {
+      try {
+        const c = JSON.parse(cachedRaw);
+        episode = c.currentEpisode || 0;
+      } catch {}
     }
-    let trans = animeData.translatedDescription;
-    if (!trans) {
-      trans = await translateDescription(animeData.description);
-      animeData.translatedDescription = trans;
-      // تحديث التخزين بعد الترجمة
-      const cacheKey = `anime_${animeId}`;
-      localStorage.setItem(cacheKey, JSON.stringify(animeData));
-    }
-    descriptionEl && (descriptionEl.textContent = trans || animeData.description);
-  }
-
-  /* === زر مشاهدة الآن === */
-  watchBtn?.addEventListener("click", () => {
-    notify("الانتقال إلى صفحة المشاهدة...");
     setTimeout(() => {
-      const cached = localStorage.getItem(`anime_${animeId}`);
-      let currentEpisode = 0;
-      if (cached) {
-        try {
-          const obj = JSON.parse(cached);
-          currentEpisode = obj.currentEpisode || 0;
-        } catch {}
-      }
-      if (currentEpisode > 0) {
-        window.location.href = `../aniwatch/aniwatch.html?id=${animeId}`;
+      if (episode > 0) {
+        location.href = `../aniwatch/aniwatch.html?id=${animeId}&ep=${episode}`;
       } else {
-        notify("لا توجد حلقات متاحة حالياً","warning");
+        notify('لا توجد حلقات متاحة حالياً','warning');
       }
-    }, 400);
+    }, 350);
   });
 
-  /* === وظائف مساعدة === */
-  function hideLoader() {
-    if (loadingScreen && !loadingScreen.classList.contains("hidden")) {
-      loadingScreen.classList.add("hidden");
-      setTimeout(()=> loadingScreen.remove(), 500);
-    }
-  }
-
-  /* === بدء التحميل === */
   loadAnimeData();
+  loadComments();
 });
