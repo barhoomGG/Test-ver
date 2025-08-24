@@ -1,10 +1,9 @@
-/* sidebar.css */
 /* --- الشريط الجانبي --- */
 .settings-sidebar {
   position: fixed;
   top: 0;
   right: -360px;
-  width: 360px; /* يبقى ثابتًا لأنه تغيير هيكلي */
+  width: 360px;
   height: 100%;
   background: var(--sidebar-bg);
   backdrop-filter: blur(7px);
@@ -14,7 +13,7 @@
   transition: right 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
-  padding: clamp(0.6rem, 2vw, 1rem) clamp(0.5rem, 2vw, 0.7rem); /* استخدام clamp للهوامش */
+  padding: clamp(0.6rem, 2vw, 1rem) clamp(0.5rem, 2vw, 0.7rem);
   overflow-y: auto;
   font-family: "Cairo", sans-serif;
   @supports not (backdrop-filter: blur(7px)) {
@@ -29,8 +28,8 @@
 .profile-section {
   display: flex;
   align-items: center;
-  gap: clamp(0.4rem, 1.5vw, 0.6rem); /* استخدام clamp للمسافات */
-  padding: clamp(0.5rem, 1.5vw, 0.6rem); /* استخدام clamp للهوامش */
+  gap: clamp(0.4rem, 1.5vw, 0.6rem);
+  padding: clamp(0.5rem, 1.5vw, 0.6rem);
   margin-bottom: clamp(1rem, 2vw, 1.2rem);
   background: rgba(255, 255, 255, 0.04);
   border-radius: 10px;
@@ -38,7 +37,7 @@
 }
 
 .user-avatar {
-  width: clamp(42px, 6vw, 50px); /* استخدام clamp لحجم الصورة */
+  width: clamp(42px, 6vw, 50px);
   height: clamp(42px, 6vw, 50px);
   border-radius: 50%;
   border: 0.5px solid var(--glass-border);
@@ -54,23 +53,23 @@
 .profile-info {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.3rem, 1vw, 0.4rem); /* استخدام clamp للمسافات */
+  gap: clamp(0.3rem, 1vw, 0.4rem);
 }
 
 .user-name {
-  font-size: clamp(1rem, 2.5vw, 1.2rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
   font-weight: 600;
   color: var(--text-color);
 }
 
 .user-status {
-  font-size: clamp(0.75rem, 2vw, 0.85rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(0.75rem, 2vw, 0.85rem);
   color: var(--text-secondary);
   opacity: 0.9;
 }
 
 .profile-edit {
-  font-size: clamp(0.7rem, 2vw, 0.8rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
   color: var(--accent-color);
   text-decoration: none;
   display: flex;
@@ -102,13 +101,13 @@
 }
 
 .profile-edit i {
-  font-size: clamp(0.7rem, 2vw, 0.8rem); /* استخدام clamp لحجم الأيقونة */
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
 }
 
 .sidebar-menu {
   display: flex;
   flex-direction: column;
-  gap: clamp(0.3rem, 1vw, 0.4rem); /* استخدام clamp للمسافات */
+  gap: clamp(0.3rem, 1vw, 0.4rem);
 }
 
 .menu-section {
@@ -118,7 +117,7 @@
 }
 
 .section-title {
-  font-size: clamp(0.75rem, 2vw, 0.85rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(0.75rem, 2vw, 0.85rem);
   font-weight: 700;
   color: var(--accent-color);
   margin: clamp(0.4rem, 1.5vw, 0.6rem) 0 clamp(0.2rem, 1vw, 0.4rem) clamp(0.5rem, 1.5vw, 0.7rem);
@@ -152,11 +151,11 @@
 .menu-item {
   display: flex;
   align-items: center;
-  gap: clamp(0.5rem, 1.5vw, 0.6rem); /* استخدام clamp للمسافات */
+  gap: clamp(0.5rem, 1.5vw, 0.6rem);
   padding: clamp(0.4rem, 1.5vw, 0.5rem) clamp(0.5rem, 1.5vw, 0.7rem);
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: clamp(0.8rem, 2vw, 0.9rem); /* استخدام clamp لحجم الخط */
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   font-weight: 500;
   background: rgba(255, 255, 255, 0.03);
   border-radius: 6px;
@@ -186,6 +185,29 @@
 }
 
 .menu-item i {
-  font-size: clamp(0.75rem, 2vw, 0.85rem); /* استخدام clamp لحجم الأيقونة */
+  font-size: clamp(0.75rem, 2vw, 0.85rem);
   color: inherit;
+}
+
+/* Media Queries للشريط الجانبي */
+@media (max-width: 768px) {
+  .settings-sidebar {
+    width: 175px;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-sidebar {
+    width: 60vw;
+    right: -100vw;
+  }
+
+  .settings-sidebar.active {
+    right: 0;
+  }
+
+  .profile-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
