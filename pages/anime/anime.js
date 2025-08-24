@@ -123,16 +123,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applySavedTheme();
 
-  // دالة عرض الإشعارات العائمة (toast)
-  function showNotification(message) {
-    const notification = document.createElement("div");
-    notification.className = "notification show";
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-      notification.classList.remove("show");
-      setTimeout(() => notification.remove(), 300);
-    }, 3000);
+  // معالجة بيانات الأنمي
+  function processAnimeData(data) {
+    return {
+      id: data.id,
+      title: data.title,
+      cover: data.cover || '',
+      poster: data.poster || '',
+      genres: Array.isArray(data.category) ? data.category.map((g) => g.trim().toLowerCase()) : String(data.category || "").split(",").map((g) => g.trim().toLowerCase()),
+      currentEpisode: data.currentEpisode || 1,
+      totalEpisodes: data.totalEpisodes || 0,
+      imdb: data.rating || 0,
+      views: data.views || 0,
+      date: data.addDate || "2000-01-01",
+      releaseDate: data.releaseDate || "2000-01-01",
+      showIn: data.showIn || "both",
+      description: data.description || '',
+      state: data.state || 'مستمر',
+      type: data.type || 'TV',
+      episodes: data.episodes || {}
+    };
   }
 
   // إعداد الشبكة
@@ -258,7 +268,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (favoritesBtn) {
       favoritesBtn.addEventListener("click", () => {
         if (!isLoggedIn) {
-          showNotification("يجب أن يسجل الدخول أولا حتى تضهر المحتوى");
+          if (window.showNotification) {
+            window.showNotification("يجب أن يسجل الدخول أولا حتى تضهر المحتوى");
+          }
           return;
         }
         isFilteredByFavorites = !isFilteredByFavorites;
@@ -275,7 +287,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (watchLaterBtn) {
       watchLaterBtn.addEventListener("click", () => {
         if (!isLoggedIn) {
-          showNotification("يجب أن يسجل الدخول أولا حتى تضهر المحتوى");
+          if (window.showNotification) {
+            window.showNotification("يجب أن يسجل الدخول أولا حتى تضهر المحتوى");
+          }
           return;
         }
         isFilteredByWatchLater = !isFilteredByWatchLater;
@@ -379,7 +393,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (favoritesBtn) favoritesBtn.classList.remove("active");
     if (watchLaterBtn) watchLaterBtn.classList.remove("active");
     if (moodFilterBtn) moodFilterBtn.classList.remove("active");
-    showNotification("تم تطبيق فلتر التصنيفات");
+    if (window.showNotification) {
+      window.showNotification("تم تطبيق فلتر التصنيفات");
+    }
     filterAnimeList();
     if (genreFilterMenu) genreFilterMenu.classList.add("hidden");
   }
@@ -397,7 +413,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (favoritesBtn) favoritesBtn.classList.remove("active");
     if (watchLaterBtn) watchLaterBtn.classList.remove("active");
     if (moodFilterBtn) moodFilterBtn.classList.remove("active");
-    showNotification("تم إعادة تعيين التصنيفات");
+    if (window.showNotification) {
+      window.showNotification("تم إعادة تعيين التصنيفات");
+    }
     filterAnimeList();
   }
 
@@ -414,7 +432,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (favoritesBtn) favoritesBtn.classList.remove("active");
       if (watchLaterBtn) watchLaterBtn.classList.remove("active");
       if (moodFilterBtn) moodFilterBtn.classList.remove("active");
-      showNotification("تم عرض جميع الأنميات");
+      if (window.showNotification) {
+        window.showNotification("تم عرض جميع الأنميات");
+      }
       filterAnimeList();
       moodFilterMenu.classList.add("hidden");
       return;
@@ -433,7 +453,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (favoritesBtn) favoritesBtn.classList.remove("active");
       if (watchLaterBtn) watchLaterBtn.classList.remove("active");
       if (moodFilterBtn) moodFilterBtn.classList.add("active");
-      showNotification("تم تطبيق فلتر الحالة النفسية");
+      if (window.showNotification) {
+        window.showNotification("تم تطبيق فلتر الحالة النفسية");
+      }
     } else {
       activeGenres.clear();
       isFilteredByFavorites = false;
@@ -442,7 +464,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (favoritesBtn) favoritesBtn.classList.remove("active");
       if (watchLaterBtn) watchLaterBtn.classList.remove("active");
       if (moodFilterBtn) moodFilterBtn.classList.remove("active");
-      showNotification("تم إعادة تعيين الحالة النفسية");
+      if (window.showNotification) {
+        window.showNotification("تم إعادة تعيين الحالة النفسية");
+      }
     }
 
     filterAnimeList();
@@ -463,7 +487,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (favoritesBtn) favoritesBtn.classList.remove("active");
     if (watchLaterBtn) watchLaterBtn.classList.remove("active");
     if (moodFilterBtn) moodFilterBtn.classList.remove("active");
-    showNotification("تم إعادة تعيين الحالة النفسية");
+    if (window.showNotification) {
+      window.showNotification("تم إعادة تعيين الحالة النفسية");
+    }
     filterAnimeList();
   }
 
@@ -472,7 +498,9 @@ document.addEventListener("DOMContentLoaded", () => {
     currentAnimeList = animeList.filter((anime) => favoriteIds.includes(anime.id));
     sortAnimeList();
     currentPage = 1;
-    showNotification("تم تحميل الأنميات المفضلة");
+    if (window.showNotification) {
+      window.showNotification("تم تحميل الأنميات المفضلة");
+    }
   }
 
   function loadUserWatchLater() {
@@ -480,7 +508,9 @@ document.addEventListener("DOMContentLoaded", () => {
     currentAnimeList = animeList.filter((anime) => watchLaterIds.includes(anime.id));
     sortAnimeList();
     currentPage = 1;
-    showNotification("تم تحميل قائمة مشاهدة لاحقًا");
+    if (window.showNotification) {
+      window.showNotification("تم تحميل قائمة مشاهدة لاحقًا");
+    }
   }
 
   function sortAnimeList() {
@@ -832,25 +862,6 @@ document.addEventListener("DOMContentLoaded", () => {
     startSpotlightTimer();
   }
 
-  // معالجة بيانات الأنمي
-  function processAnimeData(anime) {
-    return {
-      id: anime.id || `anime-${Math.random().toString(36).substr(2, 9)}`,
-      title: anime.title || "بدون عنوان",
-      poster: anime.poster || anime.cover || '',
-      cover: anime.cover || anime.poster || '',
-      genres: Array.isArray(anime.genres) ? anime.genres : [],
-      imdb: anime.imdb || parseFloat((Math.random() * 2 + 7).toFixed(1)),
-      views: anime.views || Math.floor(Math.random() * 10000),
-      releaseDate: anime.releaseDate || new Date().toISOString(),
-      totalEpisodes: anime.totalEpisodes || Math.floor(Math.random() * 24) + 1,
-      currentEpisode: anime.currentEpisode || Math.floor(Math.random() * 12) + 1,
-      showIn: anime.showIn || "all",
-      date: anime.date || new Date().toISOString(),
-    };
-  }
-
-  // تحميل البيانات
   async function loadData() {
     if (loader) loader.classList.remove("hidden");
 
@@ -861,55 +872,67 @@ document.addEventListener("DOMContentLoaded", () => {
         const uniqueAnime = new Map();
         processedData.forEach((anime) => uniqueAnime.set(anime.id, anime));
         animeList = Array.from(uniqueAnime.values());
-        showNotification("تم تحميل بيانات الأنمي بنجاح");
+        if (window.showNotification) {
+          window.showNotification("تم تحميل بيانات الأنمي بنجاح");
+        }
         initFilters();
         initGridToggle();
-        filterAnimeList();
         renderSpotlightSlider();
-        setupInfiniteScroll();
-        setTimeout(() => {
-          if (loadingScreen) loadingScreen.classList.add("hidden");
-        }, 1000);
+        filterAnimeList();
       } else {
-        throw new Error("البيانات المستلمة ليست بالصيغة المتوقعة");
+        if (window.showNotification) {
+          window.showNotification("البيانات المسترجعة غير صالحة");
+        }
       }
     } catch (error) {
-      console.error("خطأ في تحميل بيانات الأنمي:", error);
-      showNotification("فشل تحميل بيانات الأنمي، حاول مرة أخرى لاحقًا");
-      if (loadingScreen) loadingScreen.classList.add("hidden");
+      console.error("Error loading data:", error);
+      if (window.showNotification) {
+        window.showNotification("حدث خطأ في تحميل بيانات الأنمي");
+      }
     } finally {
       if (loader) loader.classList.add("hidden");
+      if (loadingScreen) {
+        loadingScreen.classList.add("hidden");
+        setTimeout(() => loadingScreen.remove(), 500);
+      }
     }
   }
 
-  // إعداد البحث
-  function setupSearch() {
-    if (animeSearch) {
-      let searchTimeout;
-      animeSearch.addEventListener("input", () => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          const query = animeSearch.value.trim().toLowerCase();
-          if (query) {
-            currentAnimeList = animeList.filter((anime) =>
-              anime.title.toLowerCase().includes(query)
-            );
-            sortAnimeList();
-            currentPage = 1;
-            renderAnimeGrid();
-          } else {
-            filterAnimeList();
-          }
-        }, 300);
-      });
+  document.addEventListener('panda:update', () => {
+    if (window.showNotification) {
+      window.showNotification("تم الكشف عن تحديث جديد، جاري التحديث...");
     }
-  }
-
-  // تهيئة الصفحة
-  function init() {
-    setupSearch();
     loadData();
+  });
+
+  if (animeSearch) {
+    animeSearch.addEventListener("input", () => {
+      const query = animeSearch.value.trim().toLowerCase();
+      if (query.length === 0) {
+        isFilteredByFavorites = false;
+        isFilteredByWatchLater = false;
+        isFilteredByMoods = false;
+        if (favoritesBtn) favoritesBtn.classList.remove("active");
+        if (watchLaterBtn) watchLaterBtn.classList.remove("active");
+        if (moodFilterBtn) moodFilterBtn.classList.remove("active");
+        currentAnimeList = [...animeList];
+        filterAnimeList();
+        return;
+      }
+
+      currentAnimeList = animeList.filter((anime) => anime.title.toLowerCase().includes(query));
+      currentPage = 1;
+      renderAnimeGrid();
+    });
   }
 
-  init();
+  function preventContextMenu() {
+    document.querySelectorAll('.anime-card img').forEach(img => {
+      img.addEventListener('contextmenu', e => e.preventDefault());
+    });
+  }
+
+  setupInfiniteScroll();
+  loadData();
+  preventContextMenu();
 });
