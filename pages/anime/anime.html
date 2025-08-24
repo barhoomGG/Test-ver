@@ -7,7 +7,7 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-  <title>Pandacine - قائمة الأنمي</title>
+  <title>Pandacine - قائمة الأنمي </title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="anime.css?ts=202508190904" />
@@ -17,6 +17,15 @@
   <div id="loadingScreen" class="loading-screen">
     <div class="loader"></div>
   </div>
+
+  <!-- حاوية الشريط العلوي -->
+  <div id="header-container"></div>
+
+  <!-- حاوية الشريط الجانبي -->
+  <div id="sidebar-container"></div>
+
+  <!-- حاوية الإشعارات -->
+  <div id="notifications-container"></div>
 
   <main class="main-content glass">
     <!-- Spotlight Slider -->
@@ -46,7 +55,8 @@
         <i class="fas fa-sort"></i> الترتيب
       </button>
       <button id="moodFilterBtn" class="filter-btn glass-btn">
-        <i class="fas fa-heartbeat"></i> الحالة النفسية
+        <i class="fas fa-heartbeat"></i> 
+        الحالة النفسية
       </button>
       <button id="favoritesBtn" class="filter-btn glass-btn">
         <i class="fas fa-heart"></i> المفضلة
@@ -110,8 +120,24 @@
     </section>
   </main>
 
+  <!-- حاوية الفوتر -->
+  <div id="footer-container"></div>
+
   <script type="module" src="data-manager.js"></script>
   <script src="theme.js"></script>
+  <script src="component-loader.js"></script>
   <script type="module" src="anime.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // تحميل المكونات
+      if (window.componentLoader) {
+        componentLoader.loadComponent('header', 'header-container');
+        componentLoader.loadComponent('sidebar', 'sidebar-container');
+        componentLoader.loadComponent('notifications', 'notifications-container');
+        componentLoader.loadComponent('footer', 'footer-container');
+      }
+    });
+  </script>
 </body>
 </html>
