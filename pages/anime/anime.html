@@ -2,15 +2,26 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://ibraheem.golden33191.workers.dev https://raw.githubusercontent.com; frame-ancestors 'none'; form-action 'self';">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 script-src 'self' 'unsafe-inline';
+                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+                 font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+                 img-src 'self' data: https:;
+                 connect-src 'self' https://ibraheem.golden33191.workers.dev https://raw.githubusercontent.com;
+                 frame-ancestors 'none';
+                 form-action 'self';">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-  <title>Pandacine - قائمة الأنمي </title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="anime.css?ts=202508190904" />
+  <title>Pandacine - قائمة الأنمي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
+        rel="stylesheet" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="anime.css" />
 </head>
 <body>
   <!-- شاشة التحميل -->
@@ -18,13 +29,9 @@
     <div class="loader"></div>
   </div>
 
-  <!-- حاوية الشريط العلوي -->
+  <!-- حاويات المكونات المشتركة -->
   <div id="header-container"></div>
-
-  <!-- حاوية الشريط الجانبي -->
   <div id="sidebar-container"></div>
-
-  <!-- حاوية الإشعارات -->
   <div id="notifications-container"></div>
 
   <main class="main-content glass">
@@ -55,8 +62,7 @@
         <i class="fas fa-sort"></i> الترتيب
       </button>
       <button id="moodFilterBtn" class="filter-btn glass-btn">
-        <i class="fas fa-heartbeat"></i> 
-        الحالة النفسية
+        <i class="fas fa-heartbeat"></i> الحالة النفسية
       </button>
       <button id="favoritesBtn" class="filter-btn glass-btn">
         <i class="fas fa-heart"></i> المفضلة
@@ -94,7 +100,7 @@
       </div>
     </div>
 
-    <!-- قائمة الحالات النفسية الجديدة -->
+    <!-- قائمة الحالات النفسية -->
     <div id="moodFilterMenu" class="filter-menu glass hidden">
       <div class="filter-header">
         <h3>الحالات النفسية</h3>
@@ -123,21 +129,17 @@
   <!-- حاوية الفوتر -->
   <div id="footer-container"></div>
 
-  <script type="module" src="data-manager.js"></script>
-  <script src="theme.js"></script>
-  <script src="component-loader.js"></script>
-  <script type="module" src="anime.js"></script>
-
+  <!-- تحميل ملفات الجذر (مسارات تصاعدية) -->
+  <script src="../../component-loader.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // تحميل المكونات
-      if (window.componentLoader) {
-        componentLoader.loadComponent('header', 'header-container');
-        componentLoader.loadComponent('sidebar', 'sidebar-container');
-        componentLoader.loadComponent('notifications', 'notifications-container');
-        componentLoader.loadComponent('footer', 'footer-container');
-      }
+      componentLoader.loadComponent('header', 'header-container');
+      componentLoader.loadComponent('sidebar', 'sidebar-container');
+      componentLoader.loadComponent('notifications', 'notifications-container');
+      componentLoader.loadComponent('footer', 'footer-container');
     });
   </script>
+  <script type="module" src="anime.js"></script>
+  <script src="../../theme.js"></script>
 </body>
 </html>
